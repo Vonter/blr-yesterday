@@ -1,6 +1,6 @@
-# blr-otd
+# blr-yesterday
 
-The code that powers [On This Day in BLR](https://blr-otd.pages.dev)
+The code that powers [BLR Yesterday](https://blryesterday.com)
 
 ## Develop
 

@@ -8,12 +8,17 @@ The code that powers [On This Day in BLR](https://blr-otd.pages.dev)
 - Start local dev server with `pnpm run dev` (or `npm run dev`)
 - Build site deployment assets with `pnpm run build` (or `npm run build`)
 
-## TODO
+## Planned
 
-- Map:
-    - Add more years (2002, ESRI 2009, ESRI Latest)
-    - Add basemap (OpenStreetMap)
-    - Improve slider (show labels, update design, dark mode)
-    - Add attribution details
-- Images from https://otd.vonter.top
-- Annotations for images
+- Map
+    - Preload adjacent years/tiles
+    - URL Parameters for location and year
+- Images (Migrate https://otd.vonter.top)
+    - Atom feed
+    - Search feature
+    - Custom annotations
+    - Location metadata to use on map
+- Other
+    - Gazette
+    - Reports
+    - State Archives

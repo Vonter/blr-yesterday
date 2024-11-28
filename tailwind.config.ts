@@ -7,5 +7,7 @@ export default {
 		extend: {}
 	},
 
+	darkMode: 'media',
+
 	plugins: []
 } satisfies Config;

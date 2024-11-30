@@ -32,9 +32,7 @@
 				</svg>
 			</button>
 
-			<h2 class="mb-8 text-3xl font-bold tracking-tight dark:text-neutral-200">
-				BLR Yesterday
-			</h2>
+			<h2 class="mb-8 text-3xl font-bold tracking-tight dark:text-neutral-200">BLR Yesterday</h2>
 
 			<div
 				class="prose prose-zinc dark:prose-invert max-w-none space-y-8 text-gray-600 dark:text-neutral-400"
@@ -49,15 +47,31 @@
 						<li>1790: Published in 1791 (Plan of the Siege of Bangalore, Lord Cornwallis)</li>
 						<li>1840: Published in 1843 (Plan of the Cantonment of Bangalore, B.C. Regel)</li>
 						<li>1850: Published in 1854 (Pharoah & Co., Madras; J. & C. Walker)</li>
-						<li>1880: Published in 1884 (Multiple individuals, unknown organization)</li>
+						<li>
+							1880: Published in 1884 (Multiple individuals, unknown organization; scans courtesy <a
+								href="https://mod.org.in/"
+								class="text-blue-600 underline hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300"
+								>Mod Foundation</a
+							>)
+						</li>
 						<li>1900: Published in 1935 (John Bartholomew)</li>
 						<li>1940: Surveyed 1935-36. Published in 1948 (Survey of India)</li>
-						<li>1960: Surveyed 1960-61. Published in 1969 (Survey of India)</li>
-						<li>1980: Surveyed 1979-80. Published in 1983 (Survey of India)</li>
-						<li>2000: Surveyed 1997-99. Published in 2002 (Survey of India)</li>
 						<li>
-							2005: Satellite images captured over multiple years through the 2000s (ESRI)
+							1960: Surveyed 1960-61. Published in 1969 (Survey of India; scans courtesy <a
+								href="https://mod.org.in/"
+								class="text-blue-600 underline hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300"
+								>Mod Foundation</a
+							>)
 						</li>
+						<li>
+							1980: Surveyed 1979-80. Published in 1983 (Survey of India; scans courtesy <a
+								href="https://mod.org.in/"
+								class="text-blue-600 underline hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300"
+								>Mod Foundation</a
+							>)
+						</li>
+						<li>2000: Surveyed 1997-99. Published in 2002 (Survey of India)</li>
+						<li>2005: Satellite images captured over multiple years through the 2000s (ESRI)</li>
 						<li>Today: Satellite images captured after 2022 (ESRI)</li>
 						<li>
 							Background: <a
@@ -70,8 +84,10 @@
 				</div>
 
 				<div class="space-y-4">
-					<h3 class="text-xl font-semibold text-gray-900 dark:text-neutral-200">From the Archives</h3>
-                    <p>Coming Soon!</p>
+					<h3 class="text-xl font-semibold text-gray-900 dark:text-neutral-200">
+						From the Archives
+					</h3>
+					<p>Coming Soon!</p>
 				</div>
 
 				<div class="space-y-4">

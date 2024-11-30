@@ -98,20 +98,24 @@
 		const preloadTiles = () => {
 			const bounds = map.getBounds();
 			const zoom = Math.floor(map.getZoom());
-			
+
 			// Convert bounds to tile coordinates using lat/lon calculations
-			const n = Math.PI - 2 * Math.PI * bounds.getNorth() / 360;
-			const s = Math.PI - 2 * Math.PI * bounds.getSouth() / 360;
-			const w = bounds.getWest() * Math.PI / 180;
-			const e = bounds.getEast() * Math.PI / 180;
+			const n = Math.PI - (2 * Math.PI * bounds.getNorth()) / 360;
+			const s = Math.PI - (2 * Math.PI * bounds.getSouth()) / 360;
+			const w = (bounds.getWest() * Math.PI) / 180;
+			const e = (bounds.getEast() * Math.PI) / 180;
 
 			// Calculate tile coordinates
 			const zoomFactor = Math.pow(2, zoom);
 			const tileBounds = {
-				minX: Math.floor((w + Math.PI) * zoomFactor / (2 * Math.PI)),
-				maxX: Math.ceil((e + Math.PI) * zoomFactor / (2 * Math.PI)),
-				minY: Math.floor((Math.log(Math.tan(Math.PI/4 + n/2)) + Math.PI) * zoomFactor / (2 * Math.PI)),
-				maxY: Math.ceil((Math.log(Math.tan(Math.PI/4 + s/2)) + Math.PI) * zoomFactor / (2 * Math.PI))
+				minX: Math.floor(((w + Math.PI) * zoomFactor) / (2 * Math.PI)),
+				maxX: Math.ceil(((e + Math.PI) * zoomFactor) / (2 * Math.PI)),
+				minY: Math.floor(
+					((Math.log(Math.tan(Math.PI / 4 + n / 2)) + Math.PI) * zoomFactor) / (2 * Math.PI)
+				),
+				maxY: Math.ceil(
+					((Math.log(Math.tan(Math.PI / 4 + s / 2)) + Math.PI) * zoomFactor) / (2 * Math.PI)
+				)
 			};
 
 			// Load tiles in viewport and surrounding area

@@ -30,10 +30,15 @@
 					viewBox="0 0 24 24"
 					stroke="currentColor"
 				>
-					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+					<path
+						stroke-linecap="round"
+						stroke-linejoin="round"
+						stroke-width="2"
+						d="M15 19l-7-7 7-7"
+					/>
 				</svg>
 			</button>
-			<div class="h-5 mt-1 w-16 text-center">
+			<div class="mt-1 h-5 w-16 text-center">
 				{#if currentYearIndex > 0}
 					<span class="text-xs text-gray-500 dark:text-neutral-500">
 						{availableYears[currentYearIndex - 1].label}
@@ -42,8 +47,8 @@
 			</div>
 		</div>
 
-		<div class="flex flex-col items-center w-24">
-			<div class="text-xl font-semibold text-gray-900 md:text-lg dark:text-neutral-200 text-center">
+		<div class="flex w-24 flex-col items-center">
+			<div class="text-center text-xl font-semibold text-gray-900 md:text-lg dark:text-neutral-200">
 				{availableYears[currentYearIndex].label}
 			</div>
 			<button
@@ -96,7 +101,7 @@
 					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
 				</svg>
 			</button>
-			<div class="h-5 mt-1 w-16 text-center">
+			<div class="mt-1 h-5 w-16 text-center">
 				{#if currentYearIndex < availableYears.length - 1}
 					<span class="text-xs text-gray-500 dark:text-neutral-500">
 						{availableYears[currentYearIndex + 1].label}
@@ -116,4 +121,4 @@
 			/>
 		{/each}
 	</div>
-</div> 
+</div>

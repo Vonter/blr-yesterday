@@ -8,20 +8,21 @@
 	let yearSlider;
 	let showHistoricalMap = true;
 
-	const dispatch = createEventDispatcher();
+	const dispatch = createEventDispatcher<{
+		showAbout: void;
+	}>();
 
 	// Available years with descriptions
 	const availableYears = [
 		{ year: 1791, label: '1790' },
 		{ year: 1843, label: '1840' },
 		{ year: 1854, label: '1850' },
-		{ year: 1884, label: '1880' },
 		{ year: 1898, label: '1900' },
-		{ year: 1948, label: '1940' },
-		{ year: 1969, label: '1960' },
-		{ year: 1983, label: '1980' },
+		{ year: 1910, label: '1910' },
+		{ year: 1940, label: '1940' },
 		{ year: 2002, label: '2000' },
 		{ year: 2009, label: '2005' },
+		{ year: 2015, label: '2015' },
 		{ year: 2024, label: 'Today' }
 	];
 	const bounds = [
@@ -174,6 +175,10 @@
 			} else if (currentYear == 2009) {
 				tiles = [
 					`https://wayback.maptiles.arcgis.com/arcgis/rest/services/World_Imagery/WMTS/1.0.0/default028mm/MapServer/tile/10/{z}/{y}/{x}`
+				];
+			} else if (currentYear == 2015) {
+				tiles = [
+					`https://wayback.maptiles.arcgis.com/arcgis/rest/services/World_Imagery/WMTS/1.0.0/default028mm/MapServer/tile/31026/{z}/{y}/{x}`
 				];
 			} else {
 				tiles = [

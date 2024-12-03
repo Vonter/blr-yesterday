@@ -30,13 +30,12 @@ The maps have been sourced from multiple places:
 - 1790: https://artsandculture.google.com/asset/bengaluru-karnataka-robert-home/KgF0MfabwOrhJg
 - 1840: https://commons.wikimedia.org/wiki/File:Plan_of_Bangalore_Cantonment_1843.jpg
 - 1850: https://commons.wikimedia.org/wiki/File:Bangalore_1854_Pharaoh_hires.jpg
-- 1880: [MOD Foundation](https://mod.org.in/)
 - 1900: https://britishlibrary.oldmapsonline.org/maps/5c5f6ea9-8f24-5df6-9fc1-ad11ecfbcdc1/
-- 1940: https://umedia.lib.umn.edu/item/p16022coll246:577 and [MOD Foundation](https://mod.org.in/)
-- 1960: [MOD Foundation](https://mod.org.in/)
-- 1980: [MOD Foundation](https://mod.org.in/)
+- 1910: https://www.raremaps.com/gallery/detail/55788/map-of-country-10-miles-around-bangalore-anonymous
+- 1940: https://umedia.lib.umn.edu/item/p16022coll246:577
 - 2000: [Bengawalk](https://bengawalk.com)
 - 2005: https://www.arcgis.com/home/item.html?id=903f0abe9c3b452dafe1ca5b8dd858b9
+- 2015: https://www.arcgis.com/home/item.html?id=9badc1f6b6a64a609a87fc75e8a6b083
 - Today: https://www.arcgis.com/home/item.html?id=10df2279f9684e4a9f6a7f08febac2a9
 
 The scanned maps are made available on the site using the following steps:

@@ -20,7 +20,8 @@
 		{ year: 1898, label: '1900' },
 		{ year: 1910, label: '1910' },
 		{ year: 1940, label: '1940' },
-		{ year: 2002, label: '2000' },
+		{ year: 2002, label: '2000 (City)' },
+		{ year: 2003, label: '2000 (Region)' },
 		{ year: 2009, label: '2005' },
 		{ year: 2015, label: '2015' },
 		{ year: 2024, label: 'Today' }

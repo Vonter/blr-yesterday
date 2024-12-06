@@ -13,7 +13,7 @@
 </script>
 
 <div
-	class="absolute bottom-2 left-1/2 z-10 min-w-[280px] max-w-[90vw] -translate-x-1/2 rounded-lg bg-white/95 p-3 shadow-md backdrop-blur-md sm:min-w-[240px] md:p-4 dark:bg-neutral-900/95"
+	class="absolute bottom-2 left-1/2 z-10 min-w-[320px] max-w-[90vw] -translate-x-1/2 rounded-lg bg-white/95 p-3 shadow-md backdrop-blur-md sm:min-w-[280px] md:p-4 dark:bg-neutral-900/95"
 >
 	<div class="grid grid-cols-[1fr_auto_1fr] items-center gap-4">
 		<div class="flex flex-col items-center">
@@ -38,7 +38,7 @@
 					/>
 				</svg>
 			</button>
-			<div class="mt-1 h-5 w-16 text-center">
+			<div class="mt-2 h-5 w-20 text-center">
 				{#if currentYearIndex > 0}
 					<span class="text-xs text-gray-500 dark:text-neutral-500">
 						{availableYears[currentYearIndex - 1].label}
@@ -47,7 +47,7 @@
 			</div>
 		</div>
 
-		<div class="flex w-24 flex-col items-center">
+		<div class="flex w-32 flex-col items-center">
 			<div class="text-center text-xl font-semibold text-gray-900 md:text-lg dark:text-neutral-200">
 				{availableYears[currentYearIndex].label}
 			</div>
@@ -101,7 +101,7 @@
 					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
 				</svg>
 			</button>
-			<div class="mt-1 h-5 w-16 text-center">
+			<div class="mt-2 h-5 w-20 text-center">
 				{#if currentYearIndex < availableYears.length - 1}
 					<span class="text-xs text-gray-500 dark:text-neutral-500">
 						{availableYears[currentYearIndex + 1].label}
@@ -111,7 +111,7 @@
 		</div>
 	</div>
 
-	<div class="mt-3 flex items-center justify-center gap-1">
+	<div class="mt-4 flex items-center justify-center gap-1">
 		{#each availableYears as year, i}
 			<div
 				class="h-1 rounded-full transition-all duration-200 {i === currentYearIndex

@@ -56,10 +56,18 @@
 						<li>1900: Published in 1935 (John Bartholomew)</li>
 						<li>1910: Published in 1910 (Litho. School 2nd Q.V.O.S. & M in Bangalore)</li>
 						<li>1940: Surveyed 1935-36. Published in 1948 (Survey of India)</li>
-						<li>2000: Surveyed 1997-99. Published in 2002 (Survey of India)</li>
-						<li>2005: Satellite images captured over multiple years through the 2000s (ESRI)</li>
+						<li>2000 (City): Surveyed 1997-99. Published in 2002 (Survey of India)</li>
 						<li>
-							2015: Satellite images captured over multiple years through the early 2010s (ESRI)
+							2000 (Region): Surveyed across multiple decades in the late 20th Century. Major
+							details updated around 2000. Published in 2011 (Survey of India)
+						</li>
+						<li>
+							2005: Satellite images captured in different areas across multiple years through the
+							2000s (ESRI)
+						</li>
+						<li>
+							2015: Satellite images captured in different areas across multiple years through the
+							early 2010s (ESRI)
 						</li>
 						<li>Today: Satellite images captured after 2022 (ESRI)</li>
 						<li>

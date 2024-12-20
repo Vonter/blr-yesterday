@@ -50,28 +50,92 @@
 				<div class="space-y-4">
 					<h3 class="text-xl font-semibold text-gray-900 dark:text-neutral-200">About the Maps</h3>
 					<ul class="list-disc space-y-2 pl-6">
-						<li>1790: Published in 1791 (Plan of the Siege of Bangalore, Lord Cornwallis)</li>
-						<li>1840: Published in 1843 (Plan of the Cantonment of Bangalore, B.C. Regel)</li>
-						<li>1850: Published in 1854 (Pharoah & Co., Madras; J. & C. Walker)</li>
-						<li>1900: Published in 1935 (John Bartholomew)</li>
-						<li>1910: Published in 1910 (Litho. School 2nd Q.V.O.S. & M in Bangalore)</li>
-						<li>1940: Surveyed 1935-36. Published in 1948 (Survey of India)</li>
-						<li>2000 (City): Surveyed 1997-99. Published in 2002 (Survey of India)</li>
 						<li>
-							2000 (Region): Surveyed across multiple decades in the late 20th Century. Major
-							details updated around 2000. Published in 2011 (Survey of India)
+							<span class="font-semibold">1790:</span> Published in 1791 (Plan of the Siege of Bangalore,
+							Lord Cornwallis)
 						</li>
 						<li>
-							2005: Satellite images captured in different areas across multiple years through the
-							2000s (ESRI)
+							<span class="font-semibold">1840:</span> Published in 1843 (Plan of the Cantonment of Bangalore,
+							B.C. Regel)
 						</li>
 						<li>
-							2015: Satellite images captured in different areas across multiple years through the
-							early 2010s (ESRI)
+							<span class="font-semibold">1850:</span> Published in 1854 (Pharoah & Co., Madras; J. &
+							C. Walker)
 						</li>
-						<li>Today: Satellite images captured after 2022 (ESRI)</li>
 						<li>
-							Background: <a
+							<span class="font-semibold">1880:</span> Published in 1884 (Multiple individuals,
+							unknown organization; scans courtesy
+							<a
+								href="https://mod.org.in/"
+								class="text-blue-600 underline hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300"
+								>Mod Foundation archives</a
+							>)
+						</li>
+						<li><span class="font-semibold">1900:</span> Published in 1935 (John Bartholomew)</li>
+						<li>
+							<span class="font-semibold">1910:</span> Published in 1910 (Litho. School 2nd Q.V.O.S.
+							& M in Bangalore)
+						</li>
+						<li>
+							<span class="font-semibold">1940:</span> Surveyed 1935-36. Published in 1948 (Survey
+							of India; scans courtesy
+							<a
+								href="https://mod.org.in/"
+								class="text-blue-600 underline hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300"
+								>Mod Foundation archives</a
+							>)
+						</li>
+						<li>
+							<span class="font-semibold">1960:</span> Surveyed 1960-61. Published in 1969 (Survey
+							of India; scans courtesy
+							<a
+								href="https://mod.org.in/"
+								class="text-blue-600 underline hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300"
+								>Mod Foundation archives</a
+							>)
+						</li>
+						<li>
+							<span class="font-semibold">1980:</span> Surveyed 1979-80. Published in 1983 (Survey
+							of India; scans courtesy
+							<a
+								href="https://mod.org.in/"
+								class="text-blue-600 underline hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300"
+								>Mod Foundation archives</a
+							>)
+						</li>
+						<li>
+							<span class="font-semibold">2000 (City):</span> Surveyed 1997-99. Published in 2002
+							(Survey of India; scans courtesy
+							<a
+								href="https://bengawalk.com"
+								class="text-blue-600 underline hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300"
+								>Bengawalk</a
+							>)
+						</li>
+						<li>
+							<span class="font-semibold">2000 (Region):</span> Surveyed across multiple decades in
+							the late 20th Century. Major details updated around 2000. Published in 2011 (Survey of
+							India; scans courtesy
+							<a
+								href="https://bengawalk.com"
+								class="text-blue-600 underline hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300"
+								>Bengawalk</a
+							>)
+						</li>
+						<li>
+							<span class="font-semibold">2005:</span> Satellite images captured in different areas across
+							multiple years through the 2000s (ESRI)
+						</li>
+						<li>
+							<span class="font-semibold">2015:</span> Satellite images captured in different areas across
+							multiple years through the early 2010s (ESRI)
+						</li>
+						<li>
+							<span class="font-semibold">Today:</span> Satellite images captured after 2022 (ESRI)
+						</li>
+						<li>
+							<span class="font-semibold">Background:</span>
+							<a
 								href="https://openstreetmap.in"
 								class="text-blue-600 underline hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300"
 								>OpenStreetMap</a

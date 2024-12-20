@@ -38,7 +38,7 @@
 					/>
 				</svg>
 			</button>
-			<div class="mt-2 h-5 w-20 text-center">
+			<div class="h-5 w-20 text-center lg:w-24">
 				{#if currentYearIndex > 0}
 					<span class="text-xs text-gray-500 dark:text-neutral-500">
 						{availableYears[currentYearIndex - 1].label}
@@ -47,7 +47,10 @@
 			</div>
 		</div>
 
-		<div class="flex w-32 flex-col items-center">
+		<div
+			class="flex w-32 flex-col
+		 items-center lg:w-36"
+		>
 			<div class="text-center text-xl font-semibold text-gray-900 md:text-lg dark:text-neutral-200">
 				{availableYears[currentYearIndex].label}
 			</div>
@@ -101,7 +104,7 @@
 					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
 				</svg>
 			</button>
-			<div class="mt-2 h-5 w-20 text-center">
+			<div class="h-5 w-20 text-center lg:w-24">
 				{#if currentYearIndex < availableYears.length - 1}
 					<span class="text-xs text-gray-500 dark:text-neutral-500">
 						{availableYears[currentYearIndex + 1].label}
@@ -118,7 +121,7 @@
 					? 'w-6 bg-gray-800 dark:bg-neutral-200'
 					: 'w-3 bg-gray-300 dark:bg-neutral-700'}"
 				title={year.label}
-			/>
+			></div>
 		{/each}
 	</div>
 </div>

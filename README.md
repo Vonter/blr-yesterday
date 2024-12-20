@@ -13,7 +13,6 @@ The code that powers [BLR Yesterday](https://blryesterday.com)
 - Map
     - Allow quick switching/comparison between any 2 years
     - Preload adjacent years/tiles
-    - URL Parameters for location and year
 - Images (Migrate https://otd.vonter.top)
     - Atom feed
     - Search feature
@@ -30,9 +29,12 @@ The maps have been sourced from multiple places:
 - 1790: https://artsandculture.google.com/asset/bengaluru-karnataka-robert-home/KgF0MfabwOrhJg
 - 1840: https://commons.wikimedia.org/wiki/File:Plan_of_Bangalore_Cantonment_1843.jpg
 - 1850: https://commons.wikimedia.org/wiki/File:Bangalore_1854_Pharaoh_hires.jpg
+- 1880: [Mod Foundation archives](https://mod.org.in/)
 - 1900: https://britishlibrary.oldmapsonline.org/maps/5c5f6ea9-8f24-5df6-9fc1-ad11ecfbcdc1/
 - 1910: https://www.raremaps.com/gallery/detail/55788/map-of-country-10-miles-around-bangalore-anonymous
-- 1940: https://umedia.lib.umn.edu/item/p16022coll246:577
+- 1940: https://umedia.lib.umn.edu/item/p16022coll246:577 and [Mod Foundation archives](https://mod.org.in/)
+- 1960: [Mod Foundation archives](https://mod.org.in/)
+- 1980: [Mod Foundation archives](https://mod.org.in/)
 - 2000 (City): [Bengawalk](https://bengawalk.com)
 - 2000 (Region): [Bengawalk](https://bengawalk.com)
 - 2005: https://www.arcgis.com/home/item.html?id=903f0abe9c3b452dafe1ca5b8dd858b9

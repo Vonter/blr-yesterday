@@ -2,10 +2,10 @@
 	import { onMount, createEventDispatcher } from 'svelte';
 	import maplibre from 'maplibre-gl';
 	import Slider from './Slider.svelte';
+	import { page } from '$app/stores';
 
-	let mapContainer;
-	let map;
-	let yearSlider;
+	let mapContainer: HTMLDivElement;
+	let map: maplibre.Map;
 	let showHistoricalMap = true;
 
 	const dispatch = createEventDispatcher<{
@@ -17,24 +17,42 @@
 		{ year: 1791, label: '1790' },
 		{ year: 1843, label: '1840' },
 		{ year: 1854, label: '1850' },
+		{ year: 1884, label: '1880' },
 		{ year: 1898, label: '1900' },
 		{ year: 1910, label: '1910' },
-		{ year: 1940, label: '1940' },
+		{ year: 1948, label: '1940' },
+		{ year: 1969, label: '1960' },
+		{ year: 1983, label: '1980' },
 		{ year: 2002, label: '2000 (City)' },
 		{ year: 2003, label: '2000 (Region)' },
 		{ year: 2009, label: '2005' },
 		{ year: 2015, label: '2015' },
 		{ year: 2024, label: 'Today' }
 	];
-	const bounds = [
+	const bounds: maplibre.LngLatBoundsLike = [
 		[77, 12.5], // Southwest coordinates
 		[78.5, 13.5] // Northeast coordinates
 	];
-	let currentYearIndex = 5;
+	let currentYearIndex = 6;
 	$: currentYear = availableYears[currentYearIndex].year;
 
 	// Initialize map
 	onMount(() => {
+		// Get URL parameters
+		const params = $page.url.searchParams;
+		const urlYear = params.get('year');
+		const urlZoom = params.get('zoom');
+		const urlLat = params.get('lat');
+		const urlLng = params.get('lng');
+
+		// Set initial map state from URL parameters if available
+		const initialZoom = urlZoom ? parseFloat(urlZoom) : 14;
+		const initialCenter: maplibre.LngLatLike =
+			urlLat && urlLng ? [parseFloat(urlLng), parseFloat(urlLat)] : [77.59, 12.98];
+		const initialYear = urlYear ? parseInt(urlYear) : currentYear;
+
+		currentYearIndex = availableYears.findIndex((y) => y.year === initialYear) || 6;
+
 		map = new maplibre.Map({
 			container: mapContainer,
 			style: {
@@ -48,7 +66,7 @@
 					},
 					'historical-map': {
 						type: 'raster',
-						tiles: [`https://maps.blryesterday.com/${currentYear}/{z}/{x}/{y}.png`],
+						tiles: getTileUrl(initialYear),
 						tileSize: 256,
 						attribution: '© Survey of India'
 					}
@@ -72,22 +90,27 @@
 					}
 				]
 			},
-			center: [77.59, 12.98],
-			zoom: 14,
+			center: initialCenter,
+			zoom: initialZoom,
 			attributionControl: false,
 			maxBounds: bounds
 		});
 
 		// Add geolocate control to the map.
-		map.addControl(
-			new maplibre.GeolocateControl({
-				positionOptions: {
-					enableHighAccuracy: true
-				},
-				trackUserLocation: true
-			}),
-			'bottom-right'
-		);
+		const geolocateControl = new maplibre.GeolocateControl({
+			positionOptions: {
+				enableHighAccuracy: true
+			},
+			trackUserLocation: true
+		});
+		map.addControl(geolocateControl, 'bottom-right');
+
+		// Handle geolocation errors
+		geolocateControl.on('error', () => {
+			let errorMessage =
+				'Failed to access GPS location. Please ensure location access is enabled. Reload the page when enabled.';
+			alert(errorMessage);
+		});
 
 		// Add attribution
 		map.addControl(new maplibre.AttributionControl(), 'bottom-left');
@@ -95,100 +118,22 @@
 		// Enable keyboard navigation
 		window.addEventListener('keydown', handleKeydown);
 
-		// Preload tiles
-		let preloadTimeout;
-		const preloadTiles = () => {
-			const bounds = map.getBounds();
-			const zoom = Math.floor(map.getZoom());
-
-			// Convert bounds to tile coordinates using lat/lon calculations
-			const n = Math.PI - (2 * Math.PI * bounds.getNorth()) / 360;
-			const s = Math.PI - (2 * Math.PI * bounds.getSouth()) / 360;
-			const w = (bounds.getWest() * Math.PI) / 180;
-			const e = (bounds.getEast() * Math.PI) / 180;
-
-			// Calculate tile coordinates
-			const zoomFactor = Math.pow(2, zoom);
-			const tileBounds = {
-				minX: Math.floor(((w + Math.PI) * zoomFactor) / (2 * Math.PI)),
-				maxX: Math.ceil(((e + Math.PI) * zoomFactor) / (2 * Math.PI)),
-				minY: Math.floor(
-					((Math.log(Math.tan(Math.PI / 4 + n / 2)) + Math.PI) * zoomFactor) / (2 * Math.PI)
-				),
-				maxY: Math.ceil(
-					((Math.log(Math.tan(Math.PI / 4 + s / 2)) + Math.PI) * zoomFactor) / (2 * Math.PI)
-				)
-			};
-
-			// Load tiles in viewport and surrounding area
-			const sourceCache = map.getSource('historical-map') as maplibre.RasterTileSource;
-			if (!sourceCache) return;
-
-			// Limit the number of tiles to preload
-			const maxTilesToLoad = 256;
-			let tilesLoaded = 0;
-
-			for (let x = tileBounds.minX - 1; x <= tileBounds.maxX + 1; x++) {
-				for (let y = tileBounds.minY - 1; y <= tileBounds.maxY + 1; y++) {
-					if (tilesLoaded >= maxTilesToLoad) return;
-
-					// Check if tile is already loaded
-					const tileID = { x, y, z: zoom };
-					const loadedTile = sourceCache.hasTile(tileID);
-					if (!loadedTile || loadedTile.state !== 'loaded') {
-						sourceCache.loadTile({
-							tileID,
-							state: 'loading'
-						});
-						tilesLoaded++;
-					}
-				}
-			}
-		};
-
-		// Preload during movement with throttling
-		map.on('move', () => {
-			if (preloadTimeout) {
-				clearTimeout(preloadTimeout);
-			}
-			preloadTimeout = setTimeout(preloadTiles, 100);
-		});
-
-		// Preload after movement ends
-		map.on('moveend', preloadTiles);
+		// Update URL parameters when map state changes
+		map.on('moveend', updateURLParams);
+		map.on('zoomend', updateURLParams);
 
 		return () => {
 			window.removeEventListener('keydown', handleKeydown);
-			if (preloadTimeout) {
-				clearTimeout(preloadTimeout);
-			}
 			map.remove();
 		};
 	});
 
 	// Update map source when year changes
 	$: if (map && currentYear) {
-		const source = map.getSource('historical-map');
+		const source = map.getSource('historical-map') as maplibre.RasterTileSource;
 		if (source) {
-			let tiles;
-			if (currentYear < 2009) {
-				tiles = [`https://maps.blryesterday.com/${currentYear}/{z}/{x}/{y}.png`];
-			} else if (currentYear == 2009) {
-				tiles = [
-					`https://wayback.maptiles.arcgis.com/arcgis/rest/services/World_Imagery/WMTS/1.0.0/default028mm/MapServer/tile/10/{z}/{y}/{x}`
-				];
-			} else if (currentYear == 2015) {
-				tiles = [
-					`https://wayback.maptiles.arcgis.com/arcgis/rest/services/World_Imagery/WMTS/1.0.0/default028mm/MapServer/tile/31026/{z}/{y}/{x}`
-				];
-			} else {
-				tiles = [
-					`https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}`
-				];
-			}
-
-			// Update the source tiles
-			source.setTiles(tiles);
+			source.tiles = getTileUrl(currentYear);
+			source.setTiles(getTileUrl(currentYear));
 		}
 	}
 
@@ -204,18 +149,49 @@
 		}
 	}
 
+	// Get tile URL based on year
+	function getTileUrl(year: number): string[] {
+		if (year < 2009) {
+			return [`https://maps.blryesterday.com/${year}/{z}/{x}/{y}.png`];
+		} else if (year == 2009) {
+			return [
+				`https://wayback.maptiles.arcgis.com/arcgis/rest/services/World_Imagery/WMTS/1.0.0/default028mm/MapServer/tile/10/{z}/{y}/{x}`
+			];
+		} else if (year == 2015) {
+			return [
+				`https://wayback.maptiles.arcgis.com/arcgis/rest/services/World_Imagery/WMTS/1.0.0/default028mm/MapServer/tile/31026/{z}/{y}/{x}`
+			];
+		} else {
+			return [
+				`https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}`
+			];
+		}
+	}
+
 	// Handle keyboard navigation
-	function handleKeydown(event) {
+	function handleKeydown(event: KeyboardEvent) {
 		if (event.key === 'ArrowLeft' && currentYearIndex > 0) {
 			currentYearIndex--;
 		} else if (event.key === 'ArrowRight' && currentYearIndex < availableYears.length - 1) {
 			currentYearIndex++;
 		}
 	}
+
+	// Update URL parameters
+	function updateURLParams() {
+		const center = map.getCenter();
+		const zoom = map.getZoom();
+		const params = new URLSearchParams();
+		params.set('zoom', zoom.toFixed(2));
+		params.set('lat', center.lat.toFixed(4));
+		params.set('lng', center.lng.toFixed(4));
+		params.set('year', currentYear.toString());
+		window.history.replaceState({}, '', `${location.pathname}?${params}`);
+	}
 </script>
 
 <div class="absolute bottom-0 left-0 right-0 h-full">
-	<div bind:this={mapContainer} class="absolute bottom-0 left-0 right-0 h-full" />
+	<div bind:this={mapContainer} class="absolute bottom-0 left-0 right-0 h-full"></div>
 	<button
 		class="absolute bottom-2 left-2 z-10 flex h-[29px] w-[29px] items-center justify-center rounded-md bg-white/95 shadow-md transition-colors duration-200 hover:bg-zinc-50 dark:bg-neutral-900/95 dark:text-neutral-200 dark:hover:bg-neutral-800/95"
 		on:click={() => dispatch('showAbout')}

@@ -1,12 +1,14 @@
 <script lang="ts">
 	import { onMount, createEventDispatcher } from 'svelte';
 	import maplibre from 'maplibre-gl';
-	import Slider from './Slider.svelte';
+	import Drawer from './Drawer.svelte';
 	import { page } from '$app/stores';
 
 	let mapContainer: HTMLDivElement;
 	let map: maplibre.Map;
 	let showHistoricalMap = true;
+
+	let historicalMapOpacity = 1;
 
 	const dispatch = createEventDispatcher<{
 		showAbout: void;
@@ -25,16 +27,25 @@
 		{ year: 1983, label: '1980' },
 		{ year: 2002, label: '2000 (City)' },
 		{ year: 2003, label: '2000 (Region)' },
-		{ year: 2009, label: '2005' },
+		{ year: 2009, label: 'Late 2000s' },
 		{ year: 2015, label: '2015' },
-		{ year: 2024, label: 'Today' }
+		{ year: 2025, label: 'Today' },
+		{ year: 2999, label: 'OpenStreetMap' }
 	];
 	const bounds: maplibre.LngLatBoundsLike = [
 		[77, 12.5], // Southwest coordinates
 		[78.5, 13.5] // Northeast coordinates
 	];
-	let currentYearIndex = 6;
-	$: currentYear = availableYears[currentYearIndex].year;
+
+	let enabledYears = availableYears.filter(
+		(year) => ![1910, 2009, 2015, 2999].includes(year.year)
+	);
+	let currentYearIndex = 5;
+	$: currentYear = enabledYears[currentYearIndex].year;
+
+	$: if (map) {
+		map.setPaintProperty('foreground', 'raster-opacity', historicalMapOpacity);
+	}
 
 	// Initialize map
 	onMount(() => {
@@ -51,7 +62,10 @@
 			urlLat && urlLng ? [parseFloat(urlLng), parseFloat(urlLat)] : [77.59, 12.98];
 		const initialYear = urlYear ? parseInt(urlYear) : currentYear;
 
-		currentYearIndex = availableYears.findIndex((y) => y.year === initialYear) || 6;
+		// Find the index of the initial year in enabledYears, default to index 6 if not found
+		const yearIndex = enabledYears.findIndex((yearData) => yearData.year === initialYear);
+		currentYearIndex = yearIndex >= 0 ? yearIndex : 6;
+		currentYear = enabledYears[currentYearIndex].year;
 
 		map = new maplibre.Map({
 			container: mapContainer,
@@ -73,19 +87,19 @@
 				},
 				layers: [
 					{
-						id: 'osm-layer',
+						id: 'background',
 						type: 'raster',
 						source: 'osm-tiles',
 						paint: {
-							'raster-opacity': 0.3
+							'raster-opacity': 0.75
 						}
 					},
 					{
-						id: 'historical-map-layer',
+						id: 'foreground',
 						type: 'raster',
 						source: 'historical-map',
 						paint: {
-							'raster-opacity': 1
+							'raster-opacity': historicalMapOpacity
 						}
 					}
 				]
@@ -128,23 +142,28 @@
 		};
 	});
 
-	// Update map source when year changes
+	let updateTimeout: ReturnType<typeof setTimeout>;
+
+	// Update map source when year changes with debounce
 	$: if (map && currentYear) {
-		const source = map.getSource('historical-map') as maplibre.RasterTileSource;
-		if (source) {
-			source.tiles = getTileUrl(currentYear);
-			source.setTiles(getTileUrl(currentYear));
-		}
+		clearTimeout(updateTimeout);
+		updateTimeout = setTimeout(() => {
+			const source = map.getSource('historical-map') as maplibre.RasterTileSource;
+			if (source) {
+				source.tiles = getTileUrl(currentYear);
+				source.setTiles(getTileUrl(currentYear));
+			}
+		}, 10); // 10ms debounce delay
 	}
 
 	// Toggle historical map visibility
 	$: if (map) {
-		const layer = map.getLayer('historical-map-layer');
+		const layer = map.getLayer('foreground');
 		if (layer) {
 			if (showHistoricalMap) {
-				map.setLayoutProperty('historical-map-layer', 'visibility', 'visible');
+				map.setLayoutProperty('foreground', 'visibility', 'visible');
 			} else {
-				map.setLayoutProperty('historical-map-layer', 'visibility', 'none');
+				map.setLayoutProperty('foreground', 'visibility', 'none');
 			}
 		}
 	}
@@ -161,10 +180,12 @@
 			return [
 				`https://wayback.maptiles.arcgis.com/arcgis/rest/services/World_Imagery/WMTS/1.0.0/default028mm/MapServer/tile/31026/{z}/{y}/{x}`
 			];
-		} else {
+		} else if (year == 2025) {
 			return [
 				`https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}`
 			];
+		} else {
+			return [`https://tile.openstreetmap.org/{z}/{x}/{y}.png`];
 		}
 	}
 
@@ -213,5 +234,11 @@
 		</svg>
 	</button>
 
-	<Slider bind:currentYearIndex bind:showHistoricalMap {availableYears} />
+	<Drawer
+		bind:enabledYears
+		bind:currentYearIndex
+		bind:showHistoricalMap
+		bind:historicalMapOpacity
+		{availableYears}
+	/>
 </div>

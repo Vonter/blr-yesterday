@@ -11,7 +11,6 @@ The code that powers [BLR Yesterday](https://blryesterday.com)
 ## Planned
 
 - Map
-    - Allow quick switching/comparison between any 2 years
     - Preload adjacent years/tiles
 - Images (Migrate https://otd.vonter.top)
     - Atom feed

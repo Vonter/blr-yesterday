@@ -10,8 +10,11 @@ The code that powers [BLR Yesterday](https://blryesterday.com)
 
 ## Planned
 
+- Meta
+    - Annotations
 - Map
-    - Preload adjacent years/tiles
+    - Configurable background tiles
+    - Horizontal slider to compare maps side-by-side
 - Images (Migrate https://otd.vonter.top)
     - Atom feed
     - Search feature

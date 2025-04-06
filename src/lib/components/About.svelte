@@ -155,9 +155,9 @@
 					<h3 class="text-xl font-semibold text-gray-900 dark:text-neutral-200">How to Use</h3>
 					<ul class="list-disc space-y-2 pl-6">
 						<li>Use the arrow buttons to switch between different years</li>
-						<li>Toggle the eye icon to show/hide the historical map</li>
 						<li>Zoom and pan around to explore different areas of the city</li>
-						<li>Use the locate button to jump to your current location</li>
+						<li>Use the locate button on the bottom right to jump to your current location</li>
+						<li>Select the gear icon to open the settings menu and enable more options</li>
 					</ul>
 				</div>
 

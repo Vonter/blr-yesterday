@@ -10,7 +10,7 @@
 			// Don't allow disabling if only one year would remain
 			if (enabledYears.length > 1) {
 				enabledYears = enabledYears.filter((y) => y.year !== year.year);
-				
+
 				// If disabling a year before current year, decrement index
 				if (year.year < currentYear.year) {
 					currentYearIndex = Math.max(0, currentYearIndex - 1);
@@ -18,8 +18,8 @@
 			}
 		} else {
 			enabledYears = [...enabledYears, year].sort((a, b) => a.year - b.year);
-			
-			// If enabling a year before current year, increment index 
+
+			// If enabling a year before current year, increment index
 			if (year.year < currentYear.year) {
 				currentYearIndex = Math.min(currentYearIndex + 1, enabledYears.length - 1);
 			}

@@ -68,9 +68,7 @@
 					>
 						Map Visibility
 					</label>
-					<p class="mt-0.5 text-sm text-gray-500 dark:text-neutral-500">
-						Show/hide the map
-					</p>
+					<p class="mt-0.5 text-sm text-gray-500 dark:text-neutral-500">Show/hide the map</p>
 				</div>
 				<button
 					class="relative inline-flex h-6 w-11 items-center rounded-full transition-colors {showHideMapButton
@@ -97,9 +95,7 @@
 					>
 						Opacity
 					</label>
-					<p class="mt-0.5 text-sm text-gray-500 dark:text-neutral-500">
-						Adjust the map opacity
-					</p>
+					<p class="mt-0.5 text-sm text-gray-500 dark:text-neutral-500">Adjust the map opacity</p>
 				</div>
 				<button
 					class="relative inline-flex h-6 w-11 items-center rounded-full transition-colors {showOpacitySlider

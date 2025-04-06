@@ -27,9 +27,9 @@
 	}
 </script>
 
-<div class="mt-4">
-	<div class="mb-2 flex items-center justify-between">
-		<h3 class="text-sm font-medium text-gray-700 dark:text-neutral-300">Timeline Years</h3>
+<div class="mt-4 space-y-2">
+	<div class="mb-1 flex items-center justify-between">
+		<h3 class="text-sm font-medium text-gray-700 dark:text-neutral-300">Enabled years</h3>
 		<span class="text-xs text-gray-500 dark:text-neutral-400">
 			{enabledYears.length} enabled
 		</span>

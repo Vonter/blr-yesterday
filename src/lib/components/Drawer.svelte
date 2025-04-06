@@ -8,6 +8,7 @@
 	export let historicalMapOpacity = 1;
 	export let enabledYears: { year: number; label: string }[];
 	export let availableYears: { year: number; label: string }[];
+	export let backgroundYearIndex: number;
 
 	let showSettings = false;
 	let showHideMapButton = false;
@@ -24,7 +25,7 @@
 	function toggleSettings() {
 		showSettings = !showSettings;
 	}
-	
+
 	function selectYear(index: number) {
 		currentYearIndex = index;
 	}
@@ -152,6 +153,7 @@
 		bind:showOpacitySlider
 		bind:enabledYears
 		bind:currentYearIndex
+		bind:backgroundYearIndex
 		{availableYears}
 	/>
 {/if}

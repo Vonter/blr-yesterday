@@ -7,7 +7,6 @@
 	let mapContainer: HTMLDivElement;
 	let map: maplibre.Map;
 	let showHistoricalMap = true;
-
 	let historicalMapOpacity = 1;
 
 	const dispatch = createEventDispatcher<{
@@ -32,6 +31,7 @@
 		{ year: 2025, label: 'Today' },
 		{ year: 2999, label: 'OpenStreetMap' }
 	];
+
 	const bounds: maplibre.LngLatBoundsLike = [
 		[77, 12.5], // Southwest coordinates
 		[78.5, 13.5] // Northeast coordinates
@@ -39,7 +39,9 @@
 
 	let enabledYears = availableYears.filter((year) => ![1910, 2009, 2015, 2999].includes(year.year));
 	let currentYearIndex = 5;
+	let backgroundYearIndex = availableYears.length - 1;
 	$: currentYear = enabledYears[currentYearIndex].year;
+	$: backgroundYear = availableYears[backgroundYearIndex].year;
 
 	// Tile cache to store preloaded images
 	const tileCache = new Map<string, HTMLImageElement>();
@@ -84,7 +86,7 @@
 				sources: {
 					'osm-tiles': {
 						type: 'raster',
-						tiles: ['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],
+						tiles: getTileUrl(backgroundYear),
 						tileSize: 256,
 						attribution: '© OpenStreetMap contributors'
 					},
@@ -428,6 +430,15 @@
 		params.set('year', currentYear.toString());
 		window.history.replaceState({}, '', `${location.pathname}?${params}`);
 	}
+
+	// Update map source when background year changes
+	$: if (map && backgroundYear) {
+		const source = map.getSource('osm-tiles') as maplibre.RasterTileSource;
+		if (source) {
+			source.tiles = getTileUrl(backgroundYear);
+			source.setTiles(getTileUrl(backgroundYear));
+		}
+	}
 </script>
 
 <div class="absolute bottom-0 left-0 right-0 h-full">
@@ -459,6 +470,7 @@
 		bind:currentYearIndex
 		bind:showHistoricalMap
 		bind:historicalMapOpacity
+		bind:backgroundYearIndex
 		{availableYears}
 	/>
 </div>

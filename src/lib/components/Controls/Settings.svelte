@@ -1,5 +1,6 @@
 <script lang="ts">
 	import TimelineYears from './TimelineYears.svelte';
+	import BackgroundYearSelector from './BackgroundYearSelector.svelte';
 
 	export let showSettings = false;
 	export let showHideMapButton = false;
@@ -7,6 +8,7 @@
 	export let enabledYears: { year: number; label: string }[];
 	export let availableYears: { year: number; label: string }[];
 	export let currentYearIndex: number;
+	export let backgroundYearIndex: number;
 
 	function toggleSettings() {
 		showSettings = !showSettings;
@@ -66,9 +68,8 @@
 						class="text-sm font-medium text-gray-900 dark:text-neutral-200"
 						for="hideMapToggle"
 					>
-						Map Visibility
+						Background visibility toggle
 					</label>
-					<p class="mt-0.5 text-sm text-gray-500 dark:text-neutral-500">Show/hide the map</p>
 				</div>
 				<button
 					class="relative inline-flex h-6 w-11 items-center rounded-full transition-colors {showHideMapButton
@@ -93,9 +94,8 @@
 						class="text-sm font-medium text-gray-900 dark:text-neutral-200"
 						for="opacitySliderToggle"
 					>
-						Opacity
+						Background opacity slider
 					</label>
-					<p class="mt-0.5 text-sm text-gray-500 dark:text-neutral-500">Adjust the map opacity</p>
 				</div>
 				<button
 					class="relative inline-flex h-6 w-11 items-center rounded-full transition-colors {showOpacitySlider
@@ -113,6 +113,8 @@
 					/>
 				</button>
 			</div>
+
+			<BackgroundYearSelector bind:backgroundYearIndex {availableYears} />
 
 			<TimelineYears {availableYears} bind:enabledYears bind:currentYearIndex></TimelineYears>
 		</div>

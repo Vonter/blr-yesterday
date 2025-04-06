@@ -11,7 +11,6 @@ The code that powers [BLR Yesterday](https://blryesterday.com)
 ## Planned
 
 - Map
-    - Configurable background tiles
     - Horizontal slider to compare maps side-by-side
 - Images (Migrate https://otd.vonter.top)
     - Atom feed

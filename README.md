@@ -10,8 +10,6 @@ The code that powers [BLR Yesterday](https://blryesterday.com)
 
 ## Planned
 
-- Meta
-    - Annotations
 - Map
     - Configurable background tiles
     - Horizontal slider to compare maps side-by-side
@@ -24,6 +22,7 @@ The code that powers [BLR Yesterday](https://blryesterday.com)
     - Gazette
     - Reports
     - State Archives
+    - Pictures
 
 ## Maps
 

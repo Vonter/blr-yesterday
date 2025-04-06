@@ -24,6 +24,10 @@
 	function toggleSettings() {
 		showSettings = !showSettings;
 	}
+	
+	function selectYear(index: number) {
+		currentYearIndex = index;
+	}
 </script>
 
 <div
@@ -129,12 +133,14 @@
 
 	<div class="mt-4 flex items-center justify-center gap-1">
 		{#each enabledYears as year, i}
-			<div
+			<button
 				class="h-1 rounded-full transition-all duration-200 {i === currentYearIndex
 					? 'w-6 bg-gray-800 dark:bg-neutral-200'
-					: 'w-3 bg-gray-300 dark:bg-neutral-700'}"
+					: 'w-3 bg-gray-300 hover:bg-gray-400 dark:bg-neutral-700 dark:hover:bg-neutral-600'}"
 				title={year.label}
-			></div>
+				aria-label={`Switch to ${year.label}`}
+				on:click={() => selectYear(i)}
+			></button>
 		{/each}
 	</div>
 </div>

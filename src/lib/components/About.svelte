@@ -77,6 +77,10 @@
 							& M in Bangalore)
 						</li>
 						<li>
+							<span class="font-semibold">1920 (Region):</span> Published in 1927 (Survey
+							of India)
+						</li>
+						<li>
 							<span class="font-semibold">1940:</span> Surveyed 1935-36. Published in 1948 (Survey
 							of India; scans courtesy
 							<a
@@ -95,6 +99,10 @@
 							>)
 						</li>
 						<li>
+							<span class="font-semibold">1960 (Region):</span> Published in 1958 (Survey
+							of India)
+						</li>
+						<li>
 							<span class="font-semibold">1980:</span> Surveyed 1979-80. Published in 1983 (Survey
 							of India; scans courtesy
 							<a
@@ -104,7 +112,11 @@
 							>)
 						</li>
 						<li>
-							<span class="font-semibold">2000 (City):</span> Surveyed 1997-99. Published in 2002
+							<span class="font-semibold">1980 (Region):</span> Published in 1978 (Survey
+							of India)
+						</li>
+						<li>
+							<span class="font-semibold">2000:</span> Surveyed 1997-99. Published in 2002
 							(Survey of India; scans courtesy
 							<a
 								href="https://bengawalk.com"

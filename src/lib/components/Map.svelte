@@ -15,21 +15,24 @@
 
 	// Available years with descriptions
 	const availableYears = [
-		{ year: 1791, label: '1790' },
-		{ year: 1843, label: '1840' },
-		{ year: 1854, label: '1850' },
-		{ year: 1884, label: '1880' },
-		{ year: 1898, label: '1900' },
-		{ year: 1910, label: '1910' },
-		{ year: 1948, label: '1940' },
-		{ year: 1969, label: '1960' },
-		{ year: 1983, label: '1980' },
-		{ year: 2002, label: '2000 (City)' },
-		{ year: 2003, label: '2000 (Region)' },
-		{ year: 2009, label: 'Late 2000s' },
-		{ year: 2015, label: '2015' },
-		{ year: 2025, label: 'Today' },
-		{ year: 2999, label: 'OpenStreetMap' }
+		{ year: 1791, label: '1790', url: 'https://maps.blryesterday.com/1791/{z}/{x}/{y}.png' },
+		{ year: 1843, label: '1840', url: 'https://maps.blryesterday.com/1843/{z}/{x}/{y}.png' },
+		{ year: 1854, label: '1850', url: 'https://maps.blryesterday.com/1854/{z}/{x}/{y}.png' },
+		{ year: 1884, label: '1880', url: 'https://maps.blryesterday.com/1884/{z}/{x}/{y}.png' },
+		{ year: 1898, label: '1900', url: 'https://maps.blryesterday.com/1898/{z}/{x}/{y}.png' },
+		{ year: 1910, label: '1910', url: 'https://maps.blryesterday.com/1910/{z}/{x}/{y}.png' },
+		{ year: 1927, label: '1920 (Region)', url: 'https://mapwarper.net/mosaics/tile/2339/{z}/{x}/{y}.png' },
+		{ year: 1948, label: '1940', url: 'https://maps.blryesterday.com/1948/{z}/{x}/{y}.png' },
+		{ year: 1969, label: '1960', url: 'https://maps.blryesterday.com/1969/{z}/{x}/{y}.png' },
+		{ year: 1958, label: '1960 (Region)', url: 'https://mapwarper.net/mosaics/tile/2341/{z}/{x}/{y}.png' },
+		{ year: 1983, label: '1980', url: 'https://maps.blryesterday.com/1983/{z}/{x}/{y}.png' },
+		{ year: 1978, label: '1980 (Region)', url: 'https://mapwarper.net/mosaics/tile/2340/{z}/{x}/{y}.png' },
+		{ year: 2002, label: '2000', url: 'https://maps.blryesterday.com/2002/{z}/{x}/{y}.png' },
+		{ year: 2003, label: '2000 (Region)', url: 'https://maps.blryesterday.com/2003/{z}/{x}/{y}.png' },
+		{ year: 2009, label: 'Late 2000s', url: 'https://wayback.maptiles.arcgis.com/arcgis/rest/services/World_Imagery/WMTS/1.0.0/default028mm/MapServer/tile/10/{z}/{y}/{x}' },
+		{ year: 2015, label: '2015', url: 'https://wayback.maptiles.arcgis.com/arcgis/rest/services/World_Imagery/WMTS/1.0.0/default028mm/MapServer/tile/31026/{z}/{y}/{x}' },
+		{ year: 2025, label: 'Today', url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}' },
+		{ year: 2999, label: 'OpenStreetMap', url: 'https://maps.blryesterday.com/2999/{z}/{x}/{y}.png' }
 	];
 
 	const bounds: maplibre.LngLatBoundsLike = [
@@ -37,7 +40,8 @@
 		[78.5, 13.5] // Northeast coordinates
 	];
 
-	let enabledYears = availableYears.filter((year) => ![1910, 2009, 2015, 2999].includes(year.year));
+	let defaultDisabledYears = [1910, 1927, 1958, 1978, 2009, 2015, 2999];
+	let enabledYears = availableYears.filter((year) => !defaultDisabledYears.includes(year.year));
 	let currentYearIndex = 5;
 	let backgroundYearIndex = availableYears.length - 1;
 	$: currentYear = enabledYears[currentYearIndex].year;
@@ -74,10 +78,19 @@
 			urlLat && urlLng ? [parseFloat(urlLng), parseFloat(urlLat)] : [77.59, 12.98];
 		const initialYear = urlYear ? parseInt(urlYear) : currentYear;
 
+		// If URL year is one of the default disabled years, keep it enabled
+		if (urlYear) {
+			const urlYearNum = parseInt(urlYear);
+			if (defaultDisabledYears.includes(urlYearNum)) {
+				defaultDisabledYears = defaultDisabledYears.filter((y) => y !== urlYearNum);
+				enabledYears = availableYears.filter((y) => !defaultDisabledYears.includes(y.year));
+			}
+		}
+
 		// Find the index of the initial year in enabledYears, default to index 6 if not found
 		const yearIndex = enabledYears.findIndex((yearData) => yearData.year === initialYear);
-		currentYearIndex = yearIndex >= 0 ? yearIndex : 6;
-		currentYear = enabledYears[currentYearIndex].year;
+		currentYearIndex = yearIndex >= 0 ? yearIndex : 5;
+		currentYear = enabledYears[currentYearIndex].year; 
 
 		map = new maplibre.Map({
 			container: mapContainer,
@@ -391,23 +404,10 @@
 
 	// Get tile URL based on year
 	function getTileUrl(year: number): string[] {
-		if (year < 2009) {
-			return [`https://maps.blryesterday.com/${year}/{z}/{x}/{y}.png`];
-		} else if (year == 2009) {
-			return [
-				`https://wayback.maptiles.arcgis.com/arcgis/rest/services/World_Imagery/WMTS/1.0.0/default028mm/MapServer/tile/10/{z}/{y}/{x}`
-			];
-		} else if (year == 2015) {
-			return [
-				`https://wayback.maptiles.arcgis.com/arcgis/rest/services/World_Imagery/WMTS/1.0.0/default028mm/MapServer/tile/31026/{z}/{y}/{x}`
-			];
-		} else if (year == 2025) {
-			return [
-				`https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}`
-			];
-		} else {
+		if (year == 2999) {
 			return [`https://tile.openstreetmap.org/{z}/{x}/{y}.png`];
 		}
+		return [availableYears.find((y) => y.year === year)?.url || ''];
 	}
 
 	// Handle keyboard navigation with debounce

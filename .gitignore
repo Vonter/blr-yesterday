@@ -22,3 +22,5 @@ vite.config.ts.timestamp-*
 
 # Other
 scripts/daily
+scripts/daily.json
+scripts/daily.stamps

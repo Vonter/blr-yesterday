@@ -11,7 +11,7 @@ from collections import defaultdict
 
 # Path to the directory containing the files
 DATA_DIR = Path(__file__).parent / "daily"
-OUTPUT_FILE = Path(__file__).parent / ".." / "static" / "daily.json"
+OUTPUT_FILE = Path(__file__).parent / "daily.json"
 
 
 def parse_filename(filename):

@@ -3,6 +3,8 @@
 	import maplibre from 'maplibre-gl';
 	import Drawer from './Drawer.svelte';
 	import { page } from '$app/stores';
+	import { config } from '$lib/config';
+	import type { YearData } from '$lib/config';
 
 	let mapContainer: HTMLDivElement;
 	let map: maplibre.Map;
@@ -13,54 +15,22 @@
 		showAbout: void;
 	}>();
 
-	// Available years with descriptions
-	const availableYears = [
-		{ year: 1791, label: '1790', url: 'https://maps.blryesterday.com/1791/{z}/{x}/{y}.png' },
-		{ year: 1843, label: '1840', url: 'https://maps.blryesterday.com/1843/{z}/{x}/{y}.png' },
-		{ year: 1854, label: '1850', url: 'https://maps.blryesterday.com/1854/{z}/{x}/{y}.png' },
-		{ year: 1884, label: '1880', url: 'https://maps.blryesterday.com/1884/{z}/{x}/{y}.png' },
-		{ year: 1898, label: '1900', url: 'https://maps.blryesterday.com/1898/{z}/{x}/{y}.png' },
-		{ year: 1910, label: '1910', url: 'https://maps.blryesterday.com/1910/{z}/{x}/{y}.png' },
-		{ year: 1927, label: '1920 (Region)', url: 'https://mapwarper.net/mosaics/tile/2339/{z}/{x}/{y}.png' },
-		{ year: 1948, label: '1940', url: 'https://maps.blryesterday.com/1948/{z}/{x}/{y}.png' },
-		{ year: 1969, label: '1960', url: 'https://maps.blryesterday.com/1969/{z}/{x}/{y}.png' },
-		{ year: 1958, label: '1960 (Region)', url: 'https://mapwarper.net/mosaics/tile/2341/{z}/{x}/{y}.png' },
-		{ year: 1983, label: '1980', url: 'https://maps.blryesterday.com/1983/{z}/{x}/{y}.png' },
-		{ year: 1978, label: '1980 (Region)', url: 'https://mapwarper.net/mosaics/tile/2340/{z}/{x}/{y}.png' },
-		{ year: 2002, label: '2000', url: 'https://maps.blryesterday.com/2002/{z}/{x}/{y}.png' },
-		{ year: 2003, label: '2000 (Region)', url: 'https://maps.blryesterday.com/2003/{z}/{x}/{y}.png' },
-		{ year: 2009, label: 'Late 2000s', url: 'https://wayback.maptiles.arcgis.com/arcgis/rest/services/World_Imagery/WMTS/1.0.0/default028mm/MapServer/tile/10/{z}/{y}/{x}' },
-		{ year: 2015, label: '2015', url: 'https://wayback.maptiles.arcgis.com/arcgis/rest/services/World_Imagery/WMTS/1.0.0/default028mm/MapServer/tile/31026/{z}/{y}/{x}' },
-		{ year: 2025, label: 'Today', url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}' },
-		{ year: 2999, label: 'OpenStreetMap', url: 'https://maps.blryesterday.com/2999/{z}/{x}/{y}.png' }
-	];
+	// Load configuration
+	const bounds: maplibre.LngLatBoundsLike = config.mapConfig.bounds;
+	const defaultYearIndex = config.mapConfig.defaultYearIndex;
+	let availableYears: YearData[] = config.availableYears;
 
-	const bounds: maplibre.LngLatBoundsLike = [
-		[77, 12.5], // Southwest coordinates
-		[78.5, 13.5] // Northeast coordinates
-	];
-
-	let defaultDisabledYears = [1910, 1927, 1958, 1978, 2009, 2015, 2999];
-	let enabledYears = availableYears.filter((year) => !defaultDisabledYears.includes(year.year));
-	let currentYearIndex = 5;
+	let enabledYears = availableYears.filter((year) => year.default !== false);
+	let currentYearIndex = Math.min(defaultYearIndex, enabledYears.length - 1);
 	let backgroundYearIndex = availableYears.length - 1;
-	$: currentYear = enabledYears[currentYearIndex].year;
-	$: backgroundYear = availableYears[backgroundYearIndex].year;
-
-	// Tile cache to store preloaded images
-	const tileCache = new Map<string, HTMLImageElement>();
-	const MAX_CACHE_SIZE = 200; // Maximum number of tiles to cache
-
-	// Function to generate a cache key
-	function getCacheKey(year: number, z: number, x: number, y: number): string {
-		return `${year}_${z}_${x}_${y}`;
-	}
-
-	// Track loading tiles to prevent redundant requests
-	const loadingTiles = new Set<string>();
+	$: currentYear = enabledYears[currentYearIndex]?.year;
+	$: backgroundYear = availableYears[backgroundYearIndex]?.year;
 
 	$: if (map) {
-		map.setPaintProperty('foreground', 'raster-opacity', historicalMapOpacity);
+		// Wait for map to be ready
+		map.once('load', () => {
+			map.setPaintProperty('foreground', 'raster-opacity', historicalMapOpacity);
+		});
 	}
 
 	// Initialize map
@@ -73,24 +43,19 @@
 		const urlLng = params.get('lng');
 
 		// Set initial map state from URL parameters if available
-		const initialZoom = urlZoom ? parseFloat(urlZoom) : 14;
-		const initialCenter: maplibre.LngLatLike =
-			urlLat && urlLng ? [parseFloat(urlLng), parseFloat(urlLat)] : [77.59, 12.98];
+		const initialZoom = urlZoom ? parseFloat(urlZoom) : config.mapConfig.initialZoom;
+		const initialCenter =
+			urlLat && urlLng ? [parseFloat(urlLng), parseFloat(urlLat)] : config.mapConfig.initialCenter;
 		const initialYear = urlYear ? parseInt(urlYear) : currentYear;
 
-		// If URL year is one of the default disabled years, keep it enabled
-		if (urlYear) {
-			const urlYearNum = parseInt(urlYear);
-			if (defaultDisabledYears.includes(urlYearNum)) {
-				defaultDisabledYears = defaultDisabledYears.filter((y) => y !== urlYearNum);
-				enabledYears = availableYears.filter((y) => !defaultDisabledYears.includes(y.year));
-			}
-		}
-
-		// Find the index of the initial year in enabledYears, default to index 6 if not found
-		const yearIndex = enabledYears.findIndex((yearData) => yearData.year === initialYear);
-		currentYearIndex = yearIndex >= 0 ? yearIndex : 5;
-		currentYear = enabledYears[currentYearIndex].year; 
+		// Set urlYear default to true
+		availableYears = availableYears.map((y) => ({
+			...y,
+			default: y.year === initialYear ? true : y.default
+		}));
+		enabledYears = availableYears.filter((y) => y.default !== false);
+		currentYearIndex = enabledYears.findIndex((year) => year.year === initialYear);
+		currentYear = enabledYears[currentYearIndex].year;
 
 		map = new maplibre.Map({
 			container: mapContainer,
@@ -136,7 +101,9 @@
 			zoom: initialZoom,
 			attributionControl: false,
 			maxBounds: bounds,
-			preserveDrawingBuffer: true
+			preserveDrawingBuffer: true,
+			cancelPendingTileRequestsWhileZooming: false,
+			maxTileCacheZoomLevels: 10
 		});
 
 		// Add geolocate control to the map.
@@ -165,224 +132,22 @@
 		map.on('moveend', updateURLParams);
 		map.on('zoomend', updateURLParams);
 
-		// Optimize tile loading on map interactions
-		map.on('movestart', () => {
-			// Prioritize visible tiles during user interaction
-			prioritizeVisibleTiles();
-		});
-
-		// Load adjacent tiles when map is idle
-		map.on('idle', () => {
-			// Preload adjacent tiles with higher priority when map is idle
-			preloadAdjacentTiles(2); // Increased padding for better coverage
-
-			// Only preload adjacent years when idle to avoid overwhelming the browser
-			preloadAdjacentYears();
-		});
-
-		// Initial preloading after map loads
-		map.once('load', () => {
-			// Preload current view tiles first
-			preloadAdjacentTiles(1);
-
-			// Then preload adjacent years with a delay to avoid initial load spike
-			setTimeout(() => {
-				preloadAdjacentYears();
-			}, 1000);
-		});
-
 		return () => {
 			window.removeEventListener('keydown', handleKeydown);
 			map.remove();
-			// Clear the cache when component unmounts
-			tileCache.clear();
 		};
 	});
 
 	let updateTimeout: ReturnType<typeof setTimeout>;
-	let preloadTimeout: ReturnType<typeof setTimeout>;
-
-	// Prioritize loading visible tiles first
-	function prioritizeVisibleTiles() {
-		if (!map) return;
-
-		const bounds = map.getBounds();
-		const zoom = Math.floor(map.getZoom());
-
-		// Calculate tile coordinates for current viewport (only visible area)
-		const ne = map.project(bounds.getNorthEast());
-		const sw = map.project(bounds.getSouthWest());
-
-		const minX = Math.floor(sw.x / 256);
-		const maxX = Math.ceil(ne.x / 256);
-		const minY = Math.floor(sw.y / 256);
-		const maxY = Math.ceil(ne.y / 256);
-
-		// First ensure visible tiles are loaded
-		for (let x = minX; x <= maxX; x++) {
-			for (let y = minY; y <= maxY; y++) {
-				preloadTile(currentYear, zoom, x, y, true); // High priority
-			}
-		}
-	}
-
-	// Preload adjacent tiles outside the viewport with improved caching
-	function preloadAdjacentTiles(padding = 1) {
-		if (!map) return;
-
-		clearTimeout(preloadTimeout);
-		preloadTimeout = setTimeout(() => {
-			const bounds = map.getBounds();
-			const zoom = Math.floor(map.getZoom());
-
-			// Calculate tile coordinates for current viewport with padding
-			const ne = map.project(bounds.getNorthEast());
-			const sw = map.project(bounds.getSouthWest());
-
-			const minX = Math.floor(sw.x / 256) - padding;
-			const maxX = Math.ceil(ne.x / 256) + padding;
-			const minY = Math.floor(sw.y / 256) - padding;
-			const maxY = Math.ceil(ne.y / 256) + padding;
-
-			// First preload visible area (higher priority)
-			const visMinX = Math.floor(sw.x / 256);
-			const visMaxX = Math.ceil(ne.x / 256);
-			const visMinY = Math.floor(sw.y / 256);
-			const visMaxY = Math.ceil(ne.y / 256);
-
-			// Preload visible tiles first with high priority
-			for (let x = visMinX; x <= visMaxX; x++) {
-				for (let y = visMinY; y <= visMaxY; y++) {
-					preloadTile(currentYear, zoom, x, y, true);
-				}
-			}
-
-			// Then preload padding tiles with lower priority
-			// Top and bottom rows
-			for (let x = minX; x <= maxX; x++) {
-				for (let y = minY; y < visMinY; y++) {
-					preloadTile(currentYear, zoom, x, y, false);
-				}
-				for (let y = visMaxY + 1; y <= maxY; y++) {
-					preloadTile(currentYear, zoom, x, y, false);
-				}
-			}
-
-			// Left and right columns (excluding corners already processed)
-			for (let y = visMinY; y <= visMaxY; y++) {
-				for (let x = minX; x < visMinX; x++) {
-					preloadTile(currentYear, zoom, x, y, false);
-				}
-				for (let x = visMaxX + 1; x <= maxX; x++) {
-					preloadTile(currentYear, zoom, x, y, false);
-				}
-			}
-		}, 150); // Longer debounce for less frequent tile loading
-	}
-
-	// Preload a single tile with caching
-	function preloadTile(year: number, z: number, x: number, y: number, highPriority = false) {
-		const cacheKey = getCacheKey(year, z, x, y);
-
-		// Skip if already in cache or currently loading
-		if (tileCache.has(cacheKey) || loadingTiles.has(cacheKey)) {
-			return;
-		}
-
-		// Mark as loading
-		loadingTiles.add(cacheKey);
-
-		const tileUrl = getTileUrl(year)[0]
-			.replace('{z}', z.toString())
-			.replace('{x}', x.toString())
-			.replace('{y}', y.toString());
-
-		// Create an image to preload the tile
-		const img = new Image();
-
-		// Set loading priority (where supported)
-		if (highPriority) {
-			img.fetchPriority = 'high' as any;
-		} else {
-			img.fetchPriority = 'low' as any;
-		}
-
-		img.onload = () => {
-			// Add to cache
-			tileCache.set(cacheKey, img);
-			loadingTiles.delete(cacheKey);
-
-			// Clean up cache if it gets too large
-			if (tileCache.size > MAX_CACHE_SIZE) {
-				// Remove oldest items (first 20% of the cache)
-				const deleteCount = Math.floor(MAX_CACHE_SIZE * 0.2);
-				const keysToDelete = Array.from(tileCache.keys()).slice(0, deleteCount);
-				keysToDelete.forEach((key) => tileCache.delete(key));
-			}
-		};
-
-		img.onerror = () => {
-			// Remove from loading set even if there was an error
-			loadingTiles.delete(cacheKey);
-		};
-
-		// Set source to start loading
-		img.src = tileUrl;
-	}
-
-	// Preload tiles for adjacent years more efficiently
-	function preloadAdjacentYears() {
-		if (!map) return;
-
-		const currentIndex = enabledYears.findIndex((y) => y.year === currentYear);
-		const adjacentYears = [
-			enabledYears[currentIndex - 1]?.year,
-			enabledYears[currentIndex + 1]?.year
-		].filter(Boolean);
-
-		if (adjacentYears.length === 0) return;
-
-		const bounds = map.getBounds();
-		const zoom = Math.floor(map.getZoom());
-
-		// Calculate visible area only for adjacent years to minimize requests
-		const ne = map.project(bounds.getNorthEast());
-		const sw = map.project(bounds.getSouthWest());
-
-		const minX = Math.floor(sw.x / 256);
-		const maxX = Math.ceil(ne.x / 256);
-		const minY = Math.floor(sw.y / 256);
-		const maxY = Math.ceil(ne.y / 256);
-
-		// Preload visible tiles for adjacent years
-		adjacentYears.forEach((year) => {
-			// Only load a subset of tiles for each adjacent year to avoid excessive requests
-			for (let x = minX; x <= maxX; x += 2) {
-				// Skip every other tile
-				for (let y = minY; y <= maxY; y += 2) {
-					// Skip every other tile
-					preloadTile(year, zoom, x, y, false);
-				}
-			}
-		});
-	}
 
 	// Update map source when year changes with debounce
-	$: if (map && currentYear) {
+	$: if (map && currentYear && enabledYears[currentYearIndex]) {
 		clearTimeout(updateTimeout);
 		updateTimeout = setTimeout(() => {
 			const source = map.getSource('historical-map') as maplibre.RasterTileSource;
 			if (source) {
 				source.tiles = getTileUrl(currentYear);
 				source.setTiles(getTileUrl(currentYear));
-
-				// Preload adjacent tiles for the new year
-				preloadAdjacentTiles(2);
-
-				// Delayed preload of adjacent years
-				setTimeout(() => {
-					preloadAdjacentYears();
-				}, 300);
 			}
 
 			// Update URL parameters
@@ -394,6 +159,8 @@
 	$: if (map) {
 		const layer = map.getLayer('foreground');
 		if (layer) {
+			map.setPaintProperty('foreground', 'raster-opacity', historicalMapOpacity);
+
 			if (showHistoricalMap) {
 				map.setLayoutProperty('foreground', 'visibility', 'visible');
 			} else {
@@ -445,7 +212,7 @@
 	<div bind:this={mapContainer} class="absolute bottom-0 left-0 right-0 h-full"></div>
 
 	<button
-		class="absolute bottom-2 left-2 z-10 flex h-[29px] w-[29px] items-center justify-center rounded-md bg-white/95 shadow-md transition-colors duration-200 hover:bg-zinc-50 dark:bg-neutral-900/95 dark:text-neutral-200 dark:hover:bg-neutral-800/95"
+		class="absolute bottom-2 left-2.5 z-10 flex h-[29px] w-[29px] items-center justify-center rounded-md bg-white/95 shadow-md transition-colors duration-200 hover:bg-zinc-50 dark:bg-neutral-900/95 dark:text-neutral-200 dark:hover:bg-neutral-800/95"
 		on:click={() => dispatch('showAbout')}
 		aria-label="Show the about drawer"
 	>

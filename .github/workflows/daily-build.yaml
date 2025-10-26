@@ -1,0 +1,89 @@
+# Workflow for fetching daily images and deploying to Cloudflare Pages
+name: Fetch daily images and deploy to Cloudflare Pages
+
+on:
+  # Runs daily at 02:30AM UTC (08:00AM IST)
+  schedule:
+    - cron: "30 2 * * *"
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# Sets permissions of the GITHUB_TOKEN to allow commiting to repository and deployment to Cloudflare Pages
+permissions:
+  contents: write
+  deployments: write
+
+# Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
+# However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    outputs:
+      daily-changed: ${{ steps.auto-commit-action.outputs.changes_detected }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Python dependencies
+        run: python -m pip install --upgrade instaloader
+      - name: Change directory to scripts
+        run: cd scripts
+
+      - name: Fetch daily images
+        run: instaloader -F -c 5 --latest-stamps daily.stamps --dirname-pattern daily blr.on.this.day
+
+      - name: Build daily.json
+        run: python daily.py
+
+      - name: Upload daily images
+        run: aws s3 sync ./daily/ ${{ secrets.S3_DESTINATION_DIR }} --endpoint-url ${{ secrets.S3_ENDPOINT }}
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+      - id: auto-commit-action
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: Update daily images
+
+  deploy:
+    needs: fetch
+    if: github.event_name != 'schedule' || needs.fetch.outputs.daily-changed == 'true'
+    environment:
+      name: cf-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: 9
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Build site
+        run: |
+          pnpm run build
+
+      - name: Deploy to Cloudflare Pages
+        uses: cloudflare/pages-action@v1
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          projectName: 'blr-otd'
+          directory: 'build'
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+          branch: 'master'

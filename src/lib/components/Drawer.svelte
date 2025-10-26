@@ -11,7 +11,7 @@
 	export let backgroundYearIndex: number;
 
 	let showSettings = false;
-	let showHideMapButton = false;
+	let showHideMapButton = true;
 	let showOpacitySlider: boolean;
 
 	function handlePrevYear() {
@@ -32,10 +32,10 @@
 </script>
 
 <div
-	class="absolute bottom-2 left-1/2 z-10 min-w-[280px] max-w-[75vw] -translate-x-1/2 rounded-lg bg-white/95 p-3 shadow-md backdrop-blur-md sm:min-w-[280px] md:p-4 dark:bg-neutral-900/95"
+	class="absolute bottom-2 left-1/2 z-10 min-w-[240px] max-w-[75vw] -translate-x-1/2 rounded-lg bg-white/95 p-2 shadow-md backdrop-blur-md sm:min-w-[240px] md:p-3 dark:bg-neutral-900/95"
 >
-	<div class="flex-cols-[1fr_auto_1fr] flex items-center gap-4">
-		<div class="flex flex-col items-center">
+	<div class="flex-cols-[1fr_auto_1fr] flex items-center gap-4 p-2">
+		<div class="flex w-20 flex-col items-center sm:w-12">
 			<button
 				class="text-gray-600 hover:text-gray-900 disabled:opacity-50 dark:text-neutral-400 dark:hover:text-neutral-200"
 				on:click={handlePrevYear}
@@ -57,7 +57,7 @@
 					/>
 				</svg>
 			</button>
-			<div class="h-5 w-20 text-center lg:w-24">
+			<div class="h-5 text-center">
 				{#if currentYearIndex > 0}
 					<span class="text-xs text-gray-500 dark:text-neutral-500">
 						{enabledYears[currentYearIndex - 1].label}
@@ -101,7 +101,7 @@
 			</div>
 		</div>
 
-		<div class="flex flex-col items-center">
+		<div class="flex w-20 flex-col items-center sm:w-12">
 			<button
 				class="text-gray-600 hover:text-gray-900 disabled:opacity-50 dark:text-neutral-400 dark:hover:text-neutral-200"
 				on:click={handleNextYear}
@@ -118,7 +118,7 @@
 					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
 				</svg>
 			</button>
-			<div class="h-5 w-20 text-center lg:w-24">
+			<div class="h-5 text-center">
 				{#if currentYearIndex < enabledYears.length - 1}
 					<span class="text-xs text-gray-500 dark:text-neutral-500">
 						{enabledYears[currentYearIndex + 1].label}

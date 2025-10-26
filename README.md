@@ -8,15 +8,21 @@ The code that powers [BLR Yesterday](https://blryesterday.com)
 - Start local dev server with `pnpm run dev` (or `npm run dev`)
 - Build site deployment assets with `pnpm run build` (or `npm run build`)
 
+### Configuration
+
+The default configuration in `src/lib/config.ts` builds the site for BLR. To build the site for a different city, update the `src/lib/config.ts` file with the configuration for that city.
+
 ## Planned
 
+- Media integration
+    - Explore view with media search
+        - Search feature
+        - Custom annotations
+    - Map view with media overlay
+        - Location metadata to use on map
+    - Media entry page
 - Map
     - Horizontal slider to compare maps side-by-side
-- Images (Migrate https://otd.vonter.top)
-    - Atom feed
-    - Search feature
-    - Custom annotations
-    - Location metadata to use on map
 - Other
     - Gazette
     - Reports
@@ -32,7 +38,7 @@ The maps have been sourced from multiple places:
 - 1880: [Mod Foundation archives](https://mod.org.in/)
 - 1900: https://britishlibrary.oldmapsonline.org/maps/5c5f6ea9-8f24-5df6-9fc1-ad11ecfbcdc1/
 - 1910: https://www.raremaps.com/gallery/detail/55788/map-of-country-10-miles-around-bangalore-anonymous
-- 1920 (Region): https://zenodo.org/records/15028333
+- 1920: https://zenodo.org/records/15028333
 - 1940: https://umedia.lib.umn.edu/item/p16022coll246:577 and [Mod Foundation archives](https://mod.org.in/)
 - 1960: [Mod Foundation archives](https://mod.org.in/)
 - 1960 (Region): https://zenodo.org/records/15028333
@@ -40,7 +46,7 @@ The maps have been sourced from multiple places:
 - 1980 (Region): https://zenodo.org/records/15028333
 - 2000: [Bengawalk](https://bengawalk.com)
 - 2000 (Region): [Bengawalk](https://bengawalk.com)
-- 2005: https://www.arcgis.com/home/item.html?id=903f0abe9c3b452dafe1ca5b8dd858b9
+- 200x: https://www.arcgis.com/home/item.html?id=903f0abe9c3b452dafe1ca5b8dd858b9
 - 2015: https://www.arcgis.com/home/item.html?id=9badc1f6b6a64a609a87fc75e8a6b083
 - Today: https://www.arcgis.com/home/item.html?id=10df2279f9684e4a9f6a7f08febac2a9
 
@@ -51,3 +57,7 @@ The scanned maps are made available on the site using the following steps:
 4. Uploaded to an R2 Bucket on Cloudflare.
 
 If you'd like to contribute a new map, create an [issue](https://github.com/Vonter/blr-yesterday/issues) with details about the map.
+
+## AI Declaration
+
+Components of this repository, including code and documentation, were written with assistance from Claude AI.

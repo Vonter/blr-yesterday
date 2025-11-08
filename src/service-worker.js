@@ -12,10 +12,28 @@ import { NetworkFirst, CacheFirst, StaleWhileRevalidate } from 'workbox-strategi
 import { ExpirationPlugin } from 'workbox-expiration';
 import { CacheableResponsePlugin } from 'workbox-cacheable-response';
 
+// Use StaleWhileRevalidate for static
+registerRoute(
+	/\/.*\.(?:js|css)$/,
+	new StaleWhileRevalidate({
+		cacheName: 'static',
+		plugins: [
+			new CacheableResponsePlugin({
+				statuses: [200]
+			}),
+			new ExpirationPlugin({
+				maxAgeSeconds: 30 * 24 * 60 * 60, // 30 Days
+				purgeOnQuotaError: true
+			})
+		]
+	})
+);
+
+// Use StaleWhileRevalidate for assets
 registerRoute(
 	/\/.*\.(?:jpg|json|png)$/,
 	new StaleWhileRevalidate({
-		cacheName: 'static',
+		cacheName: 'assets',
 		plugins: [
 			new ExpirationPlugin({
 				maxAgeSeconds: 30 * 24 * 60 * 60, // 30 Days

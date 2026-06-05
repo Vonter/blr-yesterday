@@ -9,7 +9,7 @@ interface DailyEntry {
 }
 
 function parseFilenameDate(filename: string): Date | null {
-	const match = filename.match(/^(\d{4})-(\d{2})-(\d{2})_(\d{2})-(\d{2})-(\d{2})_UTC/);
+	const match = filename.match(/^(\d{4})-(\d{2})-(\d{2})/);
 	if (!match) return null;
 
 	const [, year, month, day] = match;

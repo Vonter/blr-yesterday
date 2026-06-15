@@ -1,9 +1,17 @@
 <script lang="ts">
-	export let enabledYears: { year: number; label: string }[];
-	export let availableYears: { year: number; label: string }[];
-	export let currentYearIndex: number;
+	import type { YearOption } from '$lib/config';
 
-	function toggleYear(year: { year: number; label: string }) {
+	let {
+		enabledYears = $bindable(),
+		availableYears,
+		currentYearIndex = $bindable()
+	}: {
+		enabledYears: YearOption[];
+		availableYears: YearOption[];
+		currentYearIndex: number;
+	} = $props();
+
+	function toggleYear(year: YearOption) {
 		const currentYear = enabledYears[currentYearIndex];
 
 		if (enabledYears.some((y) => y.year === year.year)) {
@@ -44,7 +52,7 @@
 					)
 						? 'bg-gray-700 text-white dark:bg-neutral-300 dark:text-neutral-800'
 						: 'bg-gray-100 text-gray-600 dark:bg-neutral-800 dark:text-neutral-400'}"
-					on:click={() => toggleYear(year)}
+					onclick={() => toggleYear(year)}
 					disabled={enabledYears.length === 1 && enabledYears.some((y) => y.year === year.year)}
 				>
 					{year.label}

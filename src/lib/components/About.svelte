@@ -1,34 +1,61 @@
 <script lang="ts">
+	import { fade } from 'svelte/transition';
+	import { cubicOut } from 'svelte/easing';
 	import { config } from '$lib/config';
 
-	export let showAboutDrawer: boolean;
+	function sheet(_node: HTMLElement, { duration = 300, easing = cubicOut } = {}) {
+		return {
+			duration,
+			easing,
+			css: (t: number) => `transform: translateY(${(1 - t) * 100}%);`
+		};
+	}
+
+	let { showAboutDrawer = $bindable() }: { showAboutDrawer: boolean } = $props();
 
 	const { siteInfo, aboutContent } = config;
+
+	function close() {
+		showAboutDrawer = false;
+	}
+
+	function handleKeydown(event: KeyboardEvent) {
+		if (event.key === 'Escape') close();
+	}
 </script>
+
+<svelte:window onkeydown={handleKeydown} />
 
 {#if showAboutDrawer}
 	<div
-		class="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm transition-opacity"
-		on:click={() => (showAboutDrawer = false)}
-		on:keydown={(e) => e.key === 'Escape' && (showAboutDrawer = false)}
-		role="button"
-		tabindex="0"
+		class="fixed inset-0 z-40 bg-black/30 backdrop-blur-sm"
+		transition:fade={{ duration: 300 }}
+		onclick={close}
+		role="presentation"
+	></div>
+
+	<div
+		class="fixed inset-x-0 bottom-0 z-50 mx-auto flex h-1/2 flex-col overflow-hidden rounded-t-xl bg-white/95 shadow-lg backdrop-blur-md md:max-w-2xl dark:bg-neutral-900/95"
+		transition:sheet={{ duration: 300 }}
+		role="dialog"
+		aria-modal="true"
+		aria-label={siteInfo.name}
+		tabindex="-1"
 	>
 		<div
-			class="fixed bottom-0 left-0 right-0 z-50 h-1/2 overflow-y-auto bg-white/95 p-8 shadow-xl backdrop-blur-md transition-transform lg:left-1/2 lg:right-1/2 lg:w-[800px] lg:-translate-x-1/2 dark:bg-neutral-900/95"
-			on:click|stopPropagation
-			on:keydown|stopPropagation
-			role="button"
-			tabindex="0"
+			class="sticky top-0 z-10 flex shrink-0 items-center justify-between border-b border-gray-200 bg-white/95 px-4 py-3 backdrop-blur-md sm:px-6 dark:border-neutral-700 dark:bg-neutral-900/95"
 		>
+			<h2 class="text-lg font-semibold text-gray-900 sm:text-xl dark:text-neutral-200">
+				{siteInfo.name}
+			</h2>
 			<button
-				class="absolute right-6 top-6 rounded-full p-2 text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-700 dark:text-neutral-400 dark:hover:bg-neutral-800 dark:hover:text-neutral-200"
-				on:click={() => (showAboutDrawer = false)}
-				aria-label="Close drawer"
+				class="rounded-lg p-1.5 text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-900 dark:text-neutral-400 dark:hover:bg-neutral-800 dark:hover:text-neutral-200"
+				onclick={close}
+				aria-label="Close about"
 			>
 				<svg
 					xmlns="http://www.w3.org/2000/svg"
-					class="h-6 w-6"
+					class="h-5 w-5"
 					fill="none"
 					viewBox="0 0 24 24"
 					stroke="currentColor"
@@ -41,59 +68,91 @@
 					/>
 				</svg>
 			</button>
+		</div>
 
-			<h2 class="mb-8 text-3xl font-bold tracking-tight dark:text-neutral-200">{siteInfo.name}</h2>
+		<div class="flex-1 space-y-6 overflow-y-auto px-4 py-5 sm:px-6">
+			<p class="text-sm leading-relaxed text-gray-600 dark:text-neutral-400">
+				{aboutContent.introduction}
+			</p>
 
-			<div
-				class="prose prose-zinc dark:prose-invert max-w-none space-y-8 text-gray-600 dark:text-neutral-400"
-			>
-				<p class="text-lg">
-					{aboutContent.introduction}
+			{#if aboutContent.archivesSection}
+				<section class="space-y-3">
+					<h3
+						class="border-b border-gray-200 pb-2 text-xs font-semibold uppercase tracking-widest text-gray-700 dark:border-neutral-700 dark:text-neutral-300"
+					>
+						{aboutContent.archivesSection.title}
+					</h3>
+					<p class="text-sm text-gray-600 dark:text-neutral-400">
+						{aboutContent.archivesSection.content}
+					</p>
+				</section>
+			{/if}
+
+			<section class="space-y-3">
+				<h3
+					class="border-b border-gray-200 pb-2 text-xs font-semibold uppercase tracking-widest text-gray-700 dark:border-neutral-700 dark:text-neutral-300"
+				>
+					{aboutContent.contributeSection.title}
+				</h3>
+				<p class="text-sm leading-relaxed text-gray-600 dark:text-neutral-400">
+					{@html aboutContent.contributeSection.content}
+				</p>
+			</section>
+
+			<section class="space-y-3">
+				<h3
+					class="border-b border-gray-200 pb-2 text-xs font-semibold uppercase tracking-widest text-gray-700 dark:border-neutral-700 dark:text-neutral-300"
+				>
+					{aboutContent.howToUseSection.title}
+				</h3>
+				<ul class="list-disc space-y-1.5 pl-5 text-sm text-gray-600 dark:text-neutral-400">
+					{#each aboutContent.howToUseSection.items as item}
+						<li>{item}</li>
+					{/each}
+				</ul>
+			</section>
+
+			<section class="space-y-4">
+				<h3
+					class="border-b border-gray-200 pb-2 text-xs font-semibold uppercase tracking-widest text-gray-700 dark:border-neutral-700 dark:text-neutral-300"
+				>
+					{aboutContent.sourcesSection.title}
+				</h3>
+				<p class="text-sm leading-relaxed text-gray-600 dark:text-neutral-400">
+					{aboutContent.sourcesSection.description}{' '}
 				</p>
 
-				<div class="space-y-4">
-					<h3 class="text-xl font-semibold text-gray-900 dark:text-neutral-200">
+				<div class="space-y-3 border-l-2 border-gray-200 pl-4 dark:border-neutral-700">
+					<h4
+						class="text-[0.6875rem] font-semibold uppercase tracking-widest text-gray-500 dark:text-neutral-500"
+					>
 						{aboutContent.mapsSection.title}
-					</h3>
-					<ul class="list-disc space-y-2 pl-6">
+					</h4>
+					<dl class="divide-y divide-gray-100 text-sm dark:divide-neutral-800">
 						{#each aboutContent.mapsSection.items as item}
-							<li>
-								<span class="font-semibold">{item.label}:</span>
-								{@html item.description}
-							</li>
+							<div class="flex gap-3 py-1.5 first:pt-0 last:pb-0">
+								<dt class="w-20 shrink-0 font-medium text-gray-700 dark:text-neutral-300">
+									{item.label}
+								</dt>
+								<dd class="text-gray-500 dark:text-neutral-400">
+									{@html item.description}
+								</dd>
+							</div>
 						{/each}
-					</ul>
+					</dl>
 				</div>
 
-				{#if aboutContent.archivesSection}
-					<div class="space-y-4">
-						<h3 class="text-xl font-semibold text-gray-900 dark:text-neutral-200">
-							{aboutContent.archivesSection.title}
-						</h3>
-						<p>{aboutContent.archivesSection.content}</p>
-					</div>
-				{/if}
-
-				<div class="space-y-4">
-					<h3 class="text-xl font-semibold text-gray-900 dark:text-neutral-200">
-						{aboutContent.howToUseSection.title}
-					</h3>
-					<ul class="list-disc space-y-2 pl-6">
-						{#each aboutContent.howToUseSection.items as item}
-							<li>{item}</li>
-						{/each}
-					</ul>
-				</div>
-
-				<div class="space-y-4">
-					<h3 class="text-xl font-semibold text-gray-900 dark:text-neutral-200">
-						{aboutContent.contributeSection.title}
-					</h3>
-					<p>
-						{@html aboutContent.contributeSection.content}
+				<div class="space-y-3 border-l-2 border-gray-200 pl-4 dark:border-neutral-700">
+					<h4
+						class="text-[0.6875rem] font-semibold uppercase tracking-widest text-gray-500 dark:text-neutral-500"
+					>
+						{aboutContent.photographsSection.title}
+					</h4>
+					<p class="text-sm leading-relaxed text-gray-500 dark:text-neutral-400">
+						{@html aboutContent.photographsSection.content}
 					</p>
 				</div>
-			</div>
+			</section>
 		</div>
 	</div>
 {/if}

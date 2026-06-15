@@ -1,18 +1,31 @@
 <script lang="ts">
 	import Settings from './Controls/Settings.svelte';
 	import HideMap from './Controls/HideMap.svelte';
+	import PinToggle from './Controls/PinToggle.svelte';
 	import OpacitySlider from './Controls/OpacitySlider.svelte';
+	import type { YearOption } from '$lib/config';
 
-	export let currentYearIndex: number;
-	export let showHistoricalMap: boolean;
-	export let historicalMapOpacity = 1;
-	export let enabledYears: { year: number; label: string }[];
-	export let availableYears: { year: number; label: string }[];
-	export let backgroundYearIndex: number;
+	let {
+		currentYearIndex = $bindable(),
+		showHistoricalMap = $bindable(),
+		historicalMapOpacity = $bindable(1),
+		enabledYears = $bindable(),
+		availableYears,
+		backgroundYearIndex = $bindable(),
+		showPins = $bindable(false)
+	}: {
+		currentYearIndex: number;
+		showHistoricalMap: boolean;
+		historicalMapOpacity?: number;
+		enabledYears: YearOption[];
+		availableYears: YearOption[];
+		backgroundYearIndex: number;
+		showPins?: boolean;
+	} = $props();
 
-	let showSettings = false;
-	let showHideMapButton = true;
-	let showOpacitySlider: boolean;
+	let showSettings = $state(false);
+	let showHideMapButton = $state(true);
+	let showOpacitySlider = $state(false);
 
 	function handlePrevYear() {
 		currentYearIndex = Math.max(0, currentYearIndex - 1);
@@ -38,7 +51,7 @@
 		<div class="flex w-20 flex-col items-center sm:w-12">
 			<button
 				class="text-gray-600 hover:text-gray-900 disabled:opacity-50 dark:text-neutral-400 dark:hover:text-neutral-200"
-				on:click={handlePrevYear}
+				onclick={handlePrevYear}
 				disabled={currentYearIndex === 0}
 				aria-label="Previous year"
 			>
@@ -74,9 +87,13 @@
 				{enabledYears[currentYearIndex].label}
 			</div>
 			<div class="mt-0.5 flex items-center justify-center gap-1.5">
+				<PinToggle bind:showPins />
+				{#if showHideMapButton}
+					<HideMap bind:showHistoricalMap />
+				{/if}
 				<button
 					class="rounded-full p-1 text-gray-600 hover:text-gray-900 dark:text-neutral-400 dark:hover:text-neutral-200"
-					on:click={toggleSettings}
+					onclick={toggleSettings}
 					aria-label="Settings"
 				>
 					<svg
@@ -95,16 +112,13 @@
 						/><circle cx="12" cy="12" r="3" /></svg
 					>
 				</button>
-				{#if showHideMapButton}
-					<HideMap bind:showHistoricalMap />
-				{/if}
 			</div>
 		</div>
 
 		<div class="flex w-20 flex-col items-center sm:w-12">
 			<button
 				class="text-gray-600 hover:text-gray-900 disabled:opacity-50 dark:text-neutral-400 dark:hover:text-neutral-200"
-				on:click={handleNextYear}
+				onclick={handleNextYear}
 				disabled={currentYearIndex === enabledYears.length - 1}
 				aria-label="Next year"
 			>
@@ -140,7 +154,7 @@
 					: 'w-3 bg-gray-300 hover:bg-gray-400 dark:bg-neutral-700 dark:hover:bg-neutral-600'}"
 				title={year.label}
 				aria-label={`Switch to ${year.label}`}
-				on:click={() => selectYear(i)}
+				onclick={() => selectYear(i)}
 			></button>
 		{/each}
 	</div>

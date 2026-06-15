@@ -1,10 +1,10 @@
 <script lang="ts">
-	export let showHistoricalMap: boolean;
+	let { showHistoricalMap = $bindable() }: { showHistoricalMap: boolean } = $props();
 </script>
 
 <button
-	class="rounded-full p-1 text-gray-600 hover:text-gray-900 dark:text-neutral-400 dark:hover:text-neutral-200"
-	on:click={() => (showHistoricalMap = !showHistoricalMap)}
+	class="rounded-full p-1 text-gray-600 md:hover:text-gray-900 dark:text-neutral-400 dark:md:hover:text-neutral-200"
+	onclick={() => (showHistoricalMap = !showHistoricalMap)}
 	aria-label={showHistoricalMap ? 'Hide historical map' : 'Show historical map'}
 >
 	<svg

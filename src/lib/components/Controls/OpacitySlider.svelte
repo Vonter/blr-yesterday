@@ -1,5 +1,5 @@
 <script lang="ts">
-	export let historicalMapOpacity = 1;
+	let { historicalMapOpacity = $bindable(1) }: { historicalMapOpacity?: number } = $props();
 </script>
 
 <div class="mt-4 flex items-center justify-center gap-3">

@@ -2,16 +2,27 @@
 	import { onMount } from 'svelte';
 	import { config } from '$lib/config';
 
-	export let title: string = config.siteInfo.name;
-	export let description: string = config.siteInfo.description;
-	export let keywords: string = config.siteInfo.keywords;
-	export let author: string = config.siteInfo.author;
-	export let canonicalUrl: string = config.siteInfo.canonicalUrl;
-	export let ogImage: string = config.siteInfo.ogImage;
-	export let twitterHandle: string | null = null;
-	export let twitterCardType: 'summary' | 'summary_large_image' = 'summary_large_image';
+	let {
+		title = config.siteInfo.name,
+		description = config.siteInfo.description,
+		keywords = config.siteInfo.keywords,
+		author = config.siteInfo.author,
+		canonicalUrl = config.siteInfo.canonicalUrl,
+		ogImage = config.siteInfo.ogImage,
+		twitterHandle = null,
+		twitterCardType = 'summary_large_image'
+	}: {
+		title?: string;
+		description?: string;
+		keywords?: string;
+		author?: string;
+		canonicalUrl?: string;
+		ogImage?: string;
+		twitterHandle?: string | null;
+		twitterCardType?: 'summary' | 'summary_large_image';
+	} = $props();
 
-	let currentUrl: string;
+	let currentUrl = $state('');
 
 	onMount(() => {
 		currentUrl = window.location.href;

@@ -1,14 +1,25 @@
 <script lang="ts">
 	import TimelineYears from './TimelineYears.svelte';
 	import BackgroundYearSelector from './BackgroundYearSelector.svelte';
+	import type { YearOption } from '$lib/config';
 
-	export let showSettings = false;
-	export let showHideMapButton = false;
-	export let showOpacitySlider: boolean;
-	export let enabledYears: { year: number; label: string }[];
-	export let availableYears: { year: number; label: string }[];
-	export let currentYearIndex: number;
-	export let backgroundYearIndex: number;
+	let {
+		showSettings = $bindable(false),
+		showHideMapButton = $bindable(false),
+		showOpacitySlider = $bindable(),
+		enabledYears = $bindable(),
+		availableYears,
+		currentYearIndex = $bindable(),
+		backgroundYearIndex = $bindable()
+	}: {
+		showSettings?: boolean;
+		showHideMapButton?: boolean;
+		showOpacitySlider: boolean;
+		enabledYears: YearOption[];
+		availableYears: YearOption[];
+		currentYearIndex: number;
+		backgroundYearIndex: number;
+	} = $props();
 
 	function toggleSettings() {
 		showSettings = !showSettings;
@@ -28,11 +39,32 @@
 	}
 </script>
 
-<svelte:window on:keydown={handleKeydown} />
+{#snippet toggle(id: string, label: string, checked: boolean, onToggle: () => void)}
+	<div class="flex items-center justify-between gap-4">
+		<label class="text-sm font-medium text-gray-900 dark:text-neutral-200" for={id}>{label}</label>
+		<button
+			class="relative inline-flex h-6 w-11 items-center rounded-full transition-colors {checked
+				? 'bg-gray-800 dark:bg-neutral-200'
+				: 'bg-gray-200 dark:bg-neutral-700'}"
+			onclick={onToggle}
+			{id}
+			role="switch"
+			aria-checked={checked}
+		>
+			<span
+				class="inline-block h-4 w-4 transform rounded-full bg-white transition-transform dark:bg-neutral-900 {checked
+					? 'translate-x-6'
+					: 'translate-x-1'}"
+			></span>
+		</button>
+	</div>
+{/snippet}
+
+<svelte:window onkeydown={handleKeydown} />
 
 <div
 	class="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-black/30 p-4 backdrop-blur-sm"
-	on:click={handleOutsideClick}
+	onclick={handleOutsideClick}
 >
 	<div
 		class="modal relative max-h-[90vh] w-full overflow-y-auto rounded-xl bg-white/95 p-4 shadow-lg backdrop-blur-md sm:max-w-md sm:p-6 md:max-w-lg lg:max-w-xl dark:bg-neutral-900/95"
@@ -41,7 +73,7 @@
 			<h2 class="text-lg font-semibold text-gray-900 sm:text-xl dark:text-neutral-200">Settings</h2>
 			<button
 				class="rounded-lg p-1.5 text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-900 dark:text-neutral-400 dark:hover:bg-neutral-800 dark:hover:text-neutral-200"
-				on:click={toggleSettings}
+				onclick={toggleSettings}
 				aria-label="Close settings"
 			>
 				<svg
@@ -62,57 +94,18 @@
 		</div>
 
 		<div class="space-y-6">
-			<div class="flex items-center justify-between gap-4">
-				<div>
-					<label
-						class="text-sm font-medium text-gray-900 dark:text-neutral-200"
-						for="hideMapToggle"
-					>
-						Background visibility toggle
-					</label>
-				</div>
-				<button
-					class="relative inline-flex h-6 w-11 items-center rounded-full transition-colors {showHideMapButton
-						? 'bg-gray-800 dark:bg-neutral-200'
-						: 'bg-gray-200 dark:bg-neutral-700'}"
-					on:click={() => (showHideMapButton = !showHideMapButton)}
-					id="hideMapToggle"
-					role="switch"
-					aria-checked={showHideMapButton}
-				>
-					<span
-						class="inline-block h-4 w-4 transform rounded-full bg-white transition-transform dark:bg-neutral-900 {showHideMapButton
-							? 'translate-x-6'
-							: 'translate-x-1'}"
-					/>
-				</button>
-			</div>
-
-			<div class="flex items-center justify-between gap-4">
-				<div>
-					<label
-						class="text-sm font-medium text-gray-900 dark:text-neutral-200"
-						for="opacitySliderToggle"
-					>
-						Background opacity slider
-					</label>
-				</div>
-				<button
-					class="relative inline-flex h-6 w-11 items-center rounded-full transition-colors {showOpacitySlider
-						? 'bg-gray-800 dark:bg-neutral-200'
-						: 'bg-gray-200 dark:bg-neutral-700'}"
-					on:click={() => (showOpacitySlider = !showOpacitySlider)}
-					id="opacitySliderToggle"
-					role="switch"
-					aria-checked={showOpacitySlider}
-				>
-					<span
-						class="inline-block h-4 w-4 transform rounded-full bg-white transition-transform dark:bg-neutral-900 {showOpacitySlider
-							? 'translate-x-6'
-							: 'translate-x-1'}"
-					/>
-				</button>
-			</div>
+			{@render toggle(
+				'hideMapToggle',
+				'Background visibility toggle',
+				showHideMapButton,
+				() => (showHideMapButton = !showHideMapButton)
+			)}
+			{@render toggle(
+				'opacitySliderToggle',
+				'Background opacity slider',
+				showOpacitySlider,
+				() => (showOpacitySlider = !showOpacitySlider)
+			)}
 
 			<BackgroundYearSelector bind:backgroundYearIndex {availableYears} />
 

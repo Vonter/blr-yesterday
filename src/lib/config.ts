@@ -5,6 +5,85 @@ export interface YearData {
 	default?: boolean;
 }
 
+// The subset of YearData the timeline/selector controls actually need.
+export type YearOption = Pick<YearData, 'year' | 'label'>;
+
+export type MediaType = 'image' | 'document' | 'other';
+
+export interface MediaItem {
+	id: string;
+	type: MediaType;
+	lat: number;
+	lng: number;
+	file: string;
+	title: string;
+	place: string;
+	year: string; // free-form: '1860', '1890s', '~1985', 'c. 1890', '1920-1930', '20th Century', or ''
+	description: string;
+	source: string;
+	sourceUrl?: string;
+	reviewed?: boolean; // local review workflow only; unused by the public map
+	unknownLocation?: boolean; // location couldn't be determined — hidden from the map
+}
+
+// Representative numeric year of a free-form MediaItem.year, for sorting/proximity:
+// '1890s' -> 1895, '~1985'/'c. 1890' -> 1985/1890, '1920-1930'/'1923-24' -> range midpoint,
+// '20th Century' -> 1950. Returns null when no year can be parsed.
+export function representativeYear(year: string | null | undefined): number | null {
+	const text = (year ?? '').trim();
+	if (!text) return null;
+
+	const century = /(\d{1,2})\s*(?:st|nd|rd|th)[\s-]*century/i.exec(text);
+	if (century) return (parseInt(century[1], 10) - 1) * 100 + 50;
+
+	const range = /(\d{3,4})\s*[-–—]\s*(\d{1,4})\b/.exec(text);
+	if (range) {
+		const start = range[1];
+		// expand shorthand like '1923-24' to a full end year before averaging
+		const end =
+			range[2].length < start.length
+				? start.slice(0, start.length - range[2].length) + range[2]
+				: range[2];
+		return Math.round((parseInt(start, 10) + parseInt(end, 10)) / 2);
+	}
+
+	const decade = /(\d{3,4})0s\b/i.exec(text);
+	if (decade) return parseInt(decade[1], 10) * 10 + 5;
+
+	const single = /\d{3,4}/.exec(text);
+	return single ? parseInt(single[0], 10) : null;
+}
+
+// One map marker: nearby items (within 100m, share a pin.)
+export interface MediaPin {
+	id: string;
+	lat: number;
+	lng: number;
+	items: MediaItem[];
+}
+
+// Order a pin's items so the one whose year is closest to `year` comes first (the "priority"
+// item). Items without a parseable year sink to the end; the stable sort keeps dataset order on
+// ties. Returns a new array — the input is left untouched.
+export function prioritizeItems(items: MediaItem[], year: number): MediaItem[] {
+	const distance = (item: MediaItem) => {
+		const value = representativeYear(item.year);
+		return value === null ? Number.POSITIVE_INFINITY : Math.abs(value - year);
+	};
+	return [...items].sort((a, b) => distance(a) - distance(b));
+}
+
+// A copy of `pin` with its items prioritized for `year`; passes through null.
+export function withPriorityItems(pin: MediaPin | null, year: number): MediaPin | null {
+	return pin ? { ...pin, items: prioritizeItems(pin.items, year) } : null;
+}
+
+// Base URL for geolocated multimedia. Read from R2 in both dev and production.
+export const MEDIA_BASE = 'https://media.blryesterday.com/media/';
+
+// Pins render by default (the Drawer's Pin toggle can hide them).
+export const PINS_DEFAULT_ON = true;
+
 export interface SiteConfig {
 	siteInfo: {
 		name: string;
@@ -35,6 +114,14 @@ export interface SiteConfig {
 				description: string;
 			}>;
 		};
+		photographsSection: {
+			title: string;
+			content: string;
+		};
+		sourcesSection: {
+			title: string;
+			description: string;
+		};
 		archivesSection?: {
 			title: string;
 			content: string;
@@ -55,12 +142,12 @@ export const config: SiteConfig = {
 	siteInfo: {
 		name: 'BLR Yesterday',
 		cityName: 'Bangalore',
-		description:
-			"Explore Bangalore's transformation through historical maps and archival documents.",
+		description: "Explore Bangalore's history through old maps, photos and archival documents.",
 		author: 'Vivek Matthew',
 		canonicalUrl: 'https://blryesterday.com',
 		ogImage: 'https://blryesterday.com/sharecard.jpg',
-		keywords: 'blr, bangalore, bengaluru, history, maps, archives, documents',
+		keywords:
+			'blr, bangalore, bengaluru, history, maps, archives, documents, old maps, old photos, cantonment, pete, fort, civil and military station',
 		socialLinks: {
 			instagram: 'https://www.instagram.com/blr.on.this.day/',
 			github: 'https://github.com/Vonter/blr-yesterday'
@@ -133,10 +220,9 @@ export const config: SiteConfig = {
 		}
 	],
 	aboutContent: {
-		introduction:
-			"Explore Bangalore's transformation through historical maps and archival documents.",
+		introduction: "Explore Bangalore's history through old maps, photos and archival documents.",
 		mapsSection: {
-			title: 'About the Maps',
+			title: 'Maps',
 			items: [
 				{
 					label: '1790',
@@ -221,23 +307,35 @@ export const config: SiteConfig = {
 				}
 			]
 		},
+		photographsSection: {
+			title: 'Photographs',
+			content: 'The source for each photograph is shown when the photograph is selected.'
+		},
+		sourcesSection: {
+			title: 'Sources',
+			description:
+				'The maps, photographs and documents are drawn from multiple archives and collections.'
+		},
 		archivesSection: {
-			title: 'From the Archives',
+			title: 'Explore the Archives',
 			content: 'Coming Soon!'
 		},
 		howToUseSection: {
 			title: 'How to Use',
 			items: [
-				'Use the arrow buttons to switch between different years',
-				'Zoom and pan around to explore different areas of the city',
-				'Use the locate button on the bottom right to jump to your current location',
-				'Select the gear icon to open the settings menu and enable more options'
+				'Use the arrow buttons to go back or forward in time',
+				'Zoom and pan around to explore the city in that era',
+				'Select a pin or zoom in to browse old photographs from that place',
+				'Use the locate button on the bottom right to go to your current location',
+				'Toggle the pin icon to hide the pins overlayed on the map',
+				'Toggle the eye icon to hide the historical map',
+				'Use the gear icon to open the Settings and adjust the map opacity, change the background layer, or customise the timeline'
 			]
 		},
 		contributeSection: {
-			title: 'Want to Contribute?',
+			title: 'Contact Us',
 			content:
-				'Interested in helping us improve this project by contributing historical maps or documents? Contact us on <a href="https://www.instagram.com/blr.on.this.day/" class="text-blue-600 underline hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300">Instagram</a> or check out the <a href="https://github.com/Vonter/blr-yesterday" class="text-blue-600 underline hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300">GitHub repository</a>.'
+				'Have an old map, photograph or document to share? Or want to reach out to us? Email us at <a href="mailto:hello@blryesterday.com" class="text-blue-600 underline hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300">hello@blryesterday.com</a>, message on <a href="https://www.instagram.com/blr.on.this.day/" class="text-blue-600 underline hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300">Instagram</a>, or open an issue on the <a href="https://github.com/Vonter/blr-yesterday" class="text-blue-600 underline hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300">GitHub repository</a>.'
 		}
 	}
 };

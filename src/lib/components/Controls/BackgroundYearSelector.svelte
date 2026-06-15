@@ -1,8 +1,15 @@
 <script lang="ts">
-	export let backgroundYearIndex: number;
-	export let availableYears: { year: number; label: string }[];
+	import type { YearOption } from '$lib/config';
 
-	let isDropdownOpen = false;
+	let {
+		backgroundYearIndex = $bindable(),
+		availableYears
+	}: {
+		backgroundYearIndex: number;
+		availableYears: YearOption[];
+	} = $props();
+
+	let isDropdownOpen = $state(false);
 
 	function selectBackgroundYear(index: number) {
 		backgroundYearIndex = index;
@@ -28,7 +35,7 @@
 	}
 </script>
 
-<svelte:window on:click={handleOutsideClick} on:keydown={handleKeydown} />
+<svelte:window onclick={handleOutsideClick} onkeydown={handleKeydown} />
 
 <div class="mt-4 space-y-2">
 	<div class="mb-1 flex items-center justify-between">
@@ -39,7 +46,7 @@
 		<button
 			type="button"
 			class="flex w-full items-center justify-between rounded-md border border-gray-300 bg-white/95 px-3 py-2 text-sm shadow-sm transition-all duration-200 ease-in-out hover:border-gray-400 focus:border-gray-500 focus:outline-none focus:ring-1 focus:ring-gray-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-200 dark:hover:border-neutral-600 dark:focus:border-neutral-500 dark:focus:ring-neutral-500"
-			on:click={toggleDropdown}
+			onclick={toggleDropdown}
 			aria-haspopup="listbox"
 			aria-expanded={isDropdownOpen}
 			aria-labelledby="background-year-label"
@@ -83,7 +90,7 @@
 							: 'text-gray-900 hover:bg-gray-100 dark:text-neutral-200 dark:hover:bg-neutral-700'}"
 						role="option"
 						aria-selected={backgroundYearIndex === index}
-						on:click={() => selectBackgroundYear(index)}
+						onclick={() => selectBackgroundYear(index)}
 					>
 						{year.label}
 						{#if backgroundYearIndex === index}

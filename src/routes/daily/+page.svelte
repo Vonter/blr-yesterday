@@ -4,9 +4,9 @@
 	import type { PageData } from './$types';
 	import SEO from '$lib/components/SEO.svelte';
 
-	export let data: PageData;
+	let { data }: { data: PageData } = $props();
 
-	let isLoading = true;
+	let isLoading = $state(true);
 
 	onMount(() => {
 		isLoading = false;
@@ -17,7 +17,7 @@
 	data-vaul-drawer-wrapper
 	class="container mx-auto max-w-2xl bg-zinc-50 px-4 py-8 dark:bg-zinc-950"
 >
-	<SEO 
+	<SEO
 		title="Daily | {config.siteInfo.name}"
 		description="Daily snippets from {config.siteInfo.cityName}'s history"
 		keywords="daily, {config.siteInfo.keywords}"

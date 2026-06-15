@@ -3,12 +3,12 @@
 	import About from '../lib/components/About.svelte';
 	import SEO from '../lib/components/SEO.svelte';
 
-	let showAboutDrawer = false;
+	let showAboutDrawer = $state(false);
 </script>
 
 <main data-vaul-drawer-wrapper>
 	<SEO />
-	<Map on:showAbout={() => (showAboutDrawer = true)} />
+	<Map onShowAbout={() => (showAboutDrawer = true)} />
 	<About bind:showAboutDrawer />
 </main>
 

@@ -8,74 +8,41 @@ interface DailyEntry {
 	description: string;
 }
 
+const mediaUrl = (file: string) => `https://media.blryesterday.com/daily/${file}`;
+
 function parseFilenameDate(filename: string): Date | null {
 	const match = filename.match(/^(\d{4})-(\d{2})-(\d{2})/);
-	if (!match) return null;
-
-	const [, year, month, day] = match;
-	return new Date(`${year}-${month}-${day}T00:00:00Z`);
+	return match ? new Date(`${match[1]}-${match[2]}-${match[3]}T00:00:00Z`) : null;
 }
 
+// Most-recent-first feed items, one per dated daily entry that has at least one file.
 function getDailyFeedItems() {
-	const items: Array<{
-		title: string;
-		description: string;
-		link: string;
-		date: Date;
-		image?: string;
-	}> = [];
+	return (dailyData.days as DailyEntry[])
+		.flatMap((day) => {
+			const date = day.files?.length ? parseFilenameDate(day.files[0]) : null;
+			if (!date) return [];
 
-	(dailyData.days as DailyEntry[]).forEach((day) => {
-		// Skip entries with no files
-		if (!day.files || day.files.length === 0) {
-			return;
-		}
+			const title =
+				day.description ||
+				date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
 
-		// Get the date from the first file
-		const firstFile = day.files[0];
-		const date = parseFilenameDate(firstFile);
-
-		if (!date) {
-			return;
-		}
-
-		// Create a title from the description or date
-		const title =
-			day.description ||
-			date.toLocaleDateString('en-US', {
-				year: 'numeric',
-				month: 'long',
-				day: 'numeric'
-			});
-
-		// Build description with all images
-		let description = '';
-		if (day.files.length > 0) {
-			day.files.forEach((file) => {
-				description += `https://media.blryesterday.com/daily/${file}\n`;
-			});
-		}
-
-		items.push({
-			title,
-			description: description.trim(),
-			link: `https://blryesterday.com/daily`,
-			date,
-			image: day.files[0] ? `https://media.blryesterday.com/daily/${day.files[0]}` : undefined
-		});
-	});
-
-	// Sort by date descending (most recent first)
-	items.sort((a, b) => b.date.getTime() - a.date.getTime());
-
-	return items;
+			return [
+				{
+					title,
+					description: day.files.map(mediaUrl).join('\n'),
+					link: 'https://blryesterday.com/daily',
+					date,
+					image: mediaUrl(day.files[0])
+				}
+			];
+		})
+		.sort((a, b) => b.date.getTime() - a.date.getTime());
 }
 
 export async function GET() {
 	const feed = new Feed({
 		title: 'BLR Yesterday',
-		description:
-			"Explore Bangalore's transformation through historical maps and archival documents.",
+		description: "Explore Bangalore's history through old maps, photos and archival documents.",
 		id: 'https://blryesterday.com/daily',
 		link: 'https://blryesterday.com/daily',
 		language: 'en',

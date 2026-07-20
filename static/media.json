@@ -5189,6 +5189,19 @@
           "description": "",
           "source": "",
           "sourceUrl": "https://www.facebook.com/photo/?fbid=147377867783267"
+        },
+        {
+          "id": "aerial-view-of-mg-road-from-public-utility-building",
+          "type": "image",
+          "lat": 12.974656,
+          "lng": 77.6096,
+          "file": "aerial-view-of-mg-road-from-public-utility-building.jpg",
+          "title": "Aerial View of MG Road from Public Utility Building",
+          "place": "Mahatma Gandhi Road",
+          "year": "1982",
+          "description": "",
+          "source": "",
+          "sourceUrl": "https://www.facebook.com/photo/?fbid=8688597821190852"
         }
       ]
     },
@@ -6847,14 +6860,14 @@
     },
     {
       "id": "the-mysore-spinning-and-manufacturing-company-limited",
-      "lat": 12.964861,
-      "lng": 77.561052,
+      "lat": 12.968675,
+      "lng": 77.565786,
       "items": [
         {
           "id": "the-mysore-spinning-and-manufacturing-company-limited",
           "type": "image",
-          "lat": 12.964861,
-          "lng": 77.561052,
+          "lat": 12.968675,
+          "lng": 77.565786,
           "file": "the-mysore-spinning-and-manufacturing-company-limited.webp",
           "title": "The Mysore Spinning and Manufacturing Company Limited",
           "place": "Binny Mills",

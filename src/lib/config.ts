@@ -239,7 +239,7 @@ export const config: SiteConfig = {
 				{
 					label: '1880',
 					description:
-						'Published in 1884 (Multiple individuals, unknown organization; scans courtesy <a href="https://mod.org.in/" class="text-blue-600 underline hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300">Mod Foundation archives</a>)'
+						'Published in 1884 (Multiple individuals, unknown organization; scans courtesy <a href="https://mod.org.in/" class="text-blue-600 underline hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300">Mythic Society; INTACH Bengaluru; Chandan Biligunda</a>)'
 				},
 				{
 					label: '1900',

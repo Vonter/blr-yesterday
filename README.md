@@ -43,7 +43,7 @@ The maps, photographs and documents have been sourced from multiple places.
 - 1900: Published in 1935 (John Bartholomew) - https://britishlibrary.oldmapsonline.org/maps/5c5f6ea9-8f24-5df6-9fc1-ad11ecfbcdc1/
 - 1910: Published in 1910 (Litho. School 2nd Q.V.O.S. & M in Bangalore) - https://www.raremaps.com/gallery/detail/55788/map-of-country-10-miles-around-bangalore-anonymous
 - 1920: Published in 1927 (Survey of India) - https://zenodo.org/records/15028333
-- 1940: Surveyed 1935-36. Published in 1948 (Survey of India) - https://umedia.lib.umn.edu/item/p16022coll246:577 and [Mod Foundation archives](https://mod.org.in/)
+- 1940: Surveyed 1935-36. Published in 1948 (Survey of India) - https://umedia.lib.umn.edu/item/p16022coll246:577, Chandan Biligunda and [Mod Foundation archives](https://mod.org.in/)
 - 1960: Surveyed 1960-61. Published in 1969 (Survey of India) - [Mod Foundation archives](https://mod.org.in/)
 - 1960 (Region): Published in 1958 (Survey of India) - https://zenodo.org/records/15028333
 - 1980: Surveyed 1979-80. Published in 1983 (Survey of India) - [Mod Foundation archives](https://mod.org.in/)

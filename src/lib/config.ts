@@ -239,7 +239,7 @@ export const config: SiteConfig = {
 				{
 					label: '1880',
 					description:
-						'Published in 1884 (Multiple individuals, unknown organization; scans courtesy <a href="https://mod.org.in/" class="text-blue-600 underline hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300">Mythic Society; INTACH Bengaluru; Chandan Biligunda</a>)'
+						'Published in 1884 (Multiple individuals, unknown organization; scans courtesy <span class="text-blue-600 underline hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300">Mythic Society; INTACH Bengaluru; Chandan Biligunda</span>)'
 				},
 				{
 					label: '1900',
@@ -256,7 +256,7 @@ export const config: SiteConfig = {
 				{
 					label: '1940',
 					description:
-						'Surveyed 1935-36. Published in 1948 (Survey of India; scans courtesy <a href="https://mod.org.in/" class="text-blue-600 underline hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300">Mod Foundation archives</a>)'
+						'Surveyed 1935-36. Published in 1948 (Survey of India; scans courtesy <span class="text-blue-600 underline hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300">Chandan Biligunda</span>)'
 				},
 				{
 					label: '1960',

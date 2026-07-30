@@ -176,6 +176,12 @@ export const config: SiteConfig = {
 		},
 		{ year: 1927, label: '1920', url: 'https://maps.blryesterday.com/1927/{z}/{x}/{y}.png' },
 		{ year: 1948, label: '1940', url: 'https://maps.blryesterday.com/1948/{z}/{x}/{y}.png' },
+		{
+			year: 1945,
+			label: '1940 (Region)',
+			url: 'https://maps.blryesterday.com/1945/{z}/{x}/{y}.png',
+			default: false
+		},
 		{ year: 1969, label: '1960', url: 'https://maps.blryesterday.com/1969/{z}/{x}/{y}.png' },
 		{
 			year: 1958,
@@ -257,6 +263,11 @@ export const config: SiteConfig = {
 					label: '1940',
 					description:
 						'Surveyed 1935-36. Published in 1948 (Survey of India; scans courtesy <span class="text-blue-600 underline hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300">Chandan Biligunda</span>)'
+				},
+				{
+					label: '1940 (Region)',
+					description:
+						'Surveyed 1912 to 1925. Revision survey carried out in June 1943. Published in 1945 (Survey of India)'
 				},
 				{
 					label: '1960',
